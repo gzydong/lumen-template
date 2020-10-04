@@ -21,7 +21,7 @@ class AuthController extends CController
 
         // 授权中间件
         $this->middleware("auth:{$this->guard}", [
-            'except' => ['login']
+            'except' => ['logins']
         ]);
     }
 

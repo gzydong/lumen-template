@@ -58,7 +58,11 @@ class Handler extends ExceptionHandler
             return $this->error(ResponseCode::METHOD_NOT_ALLOW, 'The server returned a "405 Method Not Allowed".', [], 405);
         } else if ($exception instanceof NotFoundHttpException) {
             return $this->error(ResponseCode::RESOURCE_NOT_FOUND, 'The server returned a "404 Not Found".".', [], 404);
+        }else if($exception instanceof AuthorizationException){
+            return $this->error(ResponseCode::AUTHORIZATION_FAIL,'Unauthenticated',[],401);
         }
+
+        dd(get_class($exception));
 
         return parent::render($request, $exception);
     }

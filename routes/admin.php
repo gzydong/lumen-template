@@ -9,3 +9,14 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+
+/**
+ * AuthController 控制器分组
+ */
+$router->group([], function () use ($router) {
+    // 授权登录接口
+    $router->get('auth/login', ['middleware' => [], 'uses' => 'AuthController@login']);
+
+    // 退出登录接口
+    $router->get('auth/logout', ['middleware' => [], 'uses' => 'AuthController@logout']);
+});
