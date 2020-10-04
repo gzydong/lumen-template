@@ -20,7 +20,7 @@ $router->get('/', function () use ($router) {
  */
 $router->group([], function () use ($router) {
     // 授权登录接口
-    $router->post('auth/login', ['middleware' => [], 'uses' => 'AuthController@login']);
+    $router->get('auth/login', ['middleware' => [], 'uses' => 'AuthController@login']);
 
     // 退出登录接口
     $router->get('auth/logout', ['middleware' => [], 'uses' => 'AuthController@logout']);

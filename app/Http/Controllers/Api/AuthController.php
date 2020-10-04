@@ -35,10 +35,10 @@ class AuthController extends CController
     public function login(Request $request)
     {
         // 数据验证
-        $this->validate($request, ['mobile' => 'required', 'password' => 'required']);
+        $this->validate($request, ['username' => 'required', 'password' => 'required']);
 
         // 登录
-        $token = auth($this->guard)->attempt($request->only(['mobile', 'password']));
+        $token = auth($this->guard)->attempt($request->only(['username', 'password']));
         if (!$token) {
             return $this->fail(ResponseCode::AUTHORIZATION_FAIL, '账号不存在或密码填写错误...');
         }

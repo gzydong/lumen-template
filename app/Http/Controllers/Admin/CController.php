@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 
@@ -11,5 +11,5 @@ class CController extends Controller
      *
      * @var string
      */
-    protected $guard = 'api';
+    protected $guard = 'admin';
 }

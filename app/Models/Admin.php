@@ -9,38 +9,43 @@ use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * Class User
+ * Class Admin
  *
- * @property string $username 用户昵称
- * @property string $mobile 登录手机号
+ *
+ * @property string $id 管理ID
+ * @property string $nickname 管理员登录账号/登录名
  * @property string $password 登录密码
- * @property string $avatar 头像
- * @property integer $gender 性别
- * @property integer $created_at 注册时间
+ * @property string $status 账号状态[-1:已删除;0:已禁用;10:正常;]
+ * @property string $last_login_time 最后一次登录时间
+ * @property string $last_login_ip 最后一次登录IP
+ * @property string $created_at 创建时间
+ * @property string $updated_at 更新时间
  *
  * @package App\Models
  */
-class User extends BaseModel implements AuthenticatableContract, AuthorizableContract, JWTSubject
+class Admin extends BaseModel implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
     use Authenticatable, Authorizable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * @var string 定义表名字
      */
-    protected $fillable = [
-        'username', 'mobile', 'avatar', 'gender', 'created_at'
-    ];
+    protected $table = 'admins';
 
     /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
+     * 账号状态:正常状态
      */
-    protected $hidden = [
-        'password',
-    ];
+    const STATUS_ENABLES = 10;
+
+    /**
+     * 账号状态:禁用状态
+     */
+    const STATUS_DISABLES = 0;
+
+    /**
+     * 账号状态:删除状态
+     */
+    const STATUS_DELETE = -1;
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

@@ -130,4 +130,13 @@ $app->router->group([
     require __DIR__ . '/../routes/api.php';
 });
 
+// 后台管理路由
+$app->router->group([
+    'prefix' => 'admin',
+    'namespace' => 'App\Http\Controllers\Admin',
+    'middleware' => []
+], function ($router) {
+    require __DIR__ . '/../routes/admin.php';
+});
+
 return $app;

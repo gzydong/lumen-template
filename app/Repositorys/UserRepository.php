@@ -8,7 +8,7 @@ class UserRepository
 {
     public function __construct()
     {
-        dump('UserRepository __construct');
+
     }
 
     /**

@@ -12,6 +12,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateUsersTable extends Migration
 {
@@ -34,6 +35,10 @@ class CreateUsersTable extends Migration
             $table->collation = 'utf8_general_ci';
             $table->engine = 'InnoDB';
         });
+
+        $prefix = DB::getConfig('prefix');
+
+        DB::statement("ALTER TABLE `{$prefix}users` comment '会员用户信息表'");
     }
 
     /**
