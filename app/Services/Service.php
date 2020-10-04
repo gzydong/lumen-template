@@ -5,20 +5,23 @@ namespace App\Services;
 use Illuminate\Container\Container;
 
 /**
- * 服务处理层
- *
  * Class Service
+ *
+ * 服务处理层（通过链式操作简化手动注入依赖）
+ * 案例： services()->userService->example()
+ *
+ * @property UserService $userService
  * @package App\Services
  */
 final class Service
 {
     /**
-     * 服务列表
+     * 服务列表(需要手配置)
      *
      * @var array
      */
-    public $childService = [
-
+    private $childService = [
+        'userService' => UserService::class
     ];
 
     /**
@@ -30,6 +33,8 @@ final class Service
     }
 
     /**
+     * 魔术方法
+     *
      * @param $attr
      * @return mixed|object
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
@@ -41,13 +46,9 @@ final class Service
         }
 
         if (!Container::getInstance()->has($this->childService[$attr])) {
-            $className = $this->childService[$attr];
-
-            Container::getInstance()->singleton($className, function () use ($className) {
-                return new $className();
-            });
+            Container::getInstance()->singleton($this->childService[$attr]);
         }
 
-        return Container::getInstance()->make($this->childService[$attr],[]);
+        return Container::getInstance()->make($this->childService[$attr]);
     }
 }

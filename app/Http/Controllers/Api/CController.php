@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
-use App\Traits\JsonResponse;
-use App\Exceptions\Code;
+use App\Traits\ResponseTrait;
+use App\Exceptions\ResponseCode;
 use \Illuminate\Contracts\Auth\Authenticatable;
 
 class CController extends Controller
 {
-    use JsonResponse;
+    use ResponseTrait;
 
     /**
      * 授权方式
@@ -32,7 +32,7 @@ class CController extends Controller
             return call_user_func(static::$responseBuilder, $request, $errors);
         }
 
-        return $this->fail(Code::VALIDATION, array_shift($errors)[0], 422);
+        return $this->fail(ResponseCode::VALIDATION, array_shift($errors)[0], []);
     }
 
     /**
