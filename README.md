@@ -1,24 +1,34 @@
-# Lumen PHP Framework
+# lumen-template
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+#### 项目介绍
+lumen-template 是一个简洁的 lumen 开发模板，使用 lumen7.0 编写而成。项目没有过度的进行业务功能开发，保留了 lumen 框架的简洁。
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+#### 软件架构
+软件架构说明
 
-## Official Documentation
+#### 运行环境要求
+- PHP 7.2+
+- Mysql 5.7+
+- Redis 3.0+
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+#### 功能模块
+- 用户认证 —— 注册、登录、退出；
 
-## Contributing
+#### 安装教程
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. xxxx
+2. xxxx
+3. xxxx
 
-## Security Vulnerabilities
+#### 使用说明
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+1. xxxx
+2. xxxx
+3. xxxx
 
-## License
+#### 参与贡献
 
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Fork 本项目
+2. 新建 Feat_xxx 分支
+3. 提交代码
+4. 新建 Pull Request

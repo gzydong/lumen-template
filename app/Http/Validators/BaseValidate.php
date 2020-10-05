@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
  * 扩展验证器
  *
  * Class BaseValidate
- * @link https://www.jb51.net/article/184253.htm
+ *
  * @package App\Http\Requests
  */
 class BaseValidate

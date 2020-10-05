@@ -6,7 +6,6 @@ use App\Exceptions\ResponseCode;
 use App\Http\Validators\ExampleValidate;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ExampleController extends CController
 {
@@ -56,10 +55,6 @@ class ExampleController extends CController
      */
     public function example4(Request $request, ExampleValidate $exampleValidate)
     {
-
-        echo Str::random(32);exit;
-
-
         // 验证请求数据
         if (!$exampleValidate->scene('delete3')->check($request->all())) {
             return $this->fail(ResponseCode::VALIDATION, $exampleValidate->getError());
