@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -13,7 +14,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  *
  *
  * @property string $id 管理ID
- * @property string $nickname 管理员登录账号/登录名
+ * @property string $username 管理员登录账号/登录名
  * @property string $password 登录密码
  * @property string $status 账号状态[-1:已删除;0:已禁用;10:正常;]
  * @property string $last_login_time 最后一次登录时间
@@ -31,6 +32,11 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
      * @var string 定义表名字
      */
     protected $table = 'admins';
+
+    /**
+     * @var array 批量赋值的黑名单
+     */
+    protected $guarded = ['id'];
 
     /**
      * 账号状态:正常状态
@@ -66,4 +72,21 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
     {
         return [];
     }
+
+    /**
+     * 设置密码
+     *
+     * @param string $value 密码值
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
+
+    /**
+     * 执行模型是否自动维护时间戳.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }

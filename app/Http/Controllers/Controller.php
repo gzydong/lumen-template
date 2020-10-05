@@ -51,14 +51,4 @@ class Controller extends BaseController
     {
         return auth($this->guard)->guest() === false;
     }
-
-    /**
-     * 获取登录用户信息
-     *
-     * @return Authenticatable|null
-     */
-    protected function user()
-    {
-        return auth($this->guard)->user();
-    }
 }

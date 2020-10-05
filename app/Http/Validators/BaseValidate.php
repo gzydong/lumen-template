@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
  * 扩展验证器
  *
  * Class BaseValidate
+ * @link https://www.jb51.net/article/184253.htm
  * @package App\Http\Requests
  */
 class BaseValidate
@@ -32,15 +33,15 @@ class BaseValidate
 
     /**
      * 设置当前验证场景
-     * @var array
+     * @var string
      */
-    protected $currentScene = null;
+    protected $currentScene;
 
     /**
      * 验证失败错误信息
-     * @var array
+     * @var string
      */
-    protected $error = [];
+    protected $error;
 
     /**
      * 场景需要验证的规则
@@ -50,36 +51,34 @@ class BaseValidate
 
     /**
      * 设置验证场景
-     * @access public
+     *
      * @param string $name 场景名
      * @return $this
      */
     public function scene($name)
     {
-        // 设置当前场景
         $this->currentScene = $name;
-
         return $this;
     }
 
     /**
      * 数据验证
-     * @access public
+     *
      * @param array $data 数据
-     * @param mixed $rules 验证规则
+     * @param array $rules 验证规则
      * @param array $message 自定义验证信息
      * @param string $scene 验证场景
      * @return bool
      */
     public function check($data, $rules = [], $message = [], $scene = '')
     {
-        $this->error = [];
-        if (empty($rules)) {
-            $rules = $this->rule; //读取验证规则
-        }
-        if (empty($message)) {
-            $message = $this->message;
-        }
+        $this->error = '';
+
+        // 验证规则
+        $rules = !empty($rules) ?: $this->rule;
+
+        // 自定义验证信息
+        $message = !empty($message) ?: $this->message;
 
         // 读取场景
         if (!$this->getScene($scene)) {
@@ -110,40 +109,35 @@ class BaseValidate
 
     /**
      * 获取数据验证的场景
-     * @access protected
+     *
      * @param string $scene 验证场景
-     * @return void
+     * @return bool
      */
     protected function getScene($scene = '')
     {
         if (empty($scene)) {
-            // 读取指定场景
             $scene = $this->currentScene;
         }
 
         $this->only = [];
 
-        if (empty($scene)) {
-            return true;
-        }
+        if (empty($scene)) return true;
 
         if (!isset($this->scene[$scene])) {
-            //指定场景未找到写入error
-            $this->error = "scene:" . $scene . 'is not found';
+            $this->error = "scene:{$scene} is not found";
             return false;
         }
 
         // 如果设置了验证适用场景
-        $scene = $this->scene[$scene];
-        if (is_string($scene)) {
-            $scene = explode(',', $scene);
-        }
-        //将场景需要验证的字段填充入only
-        $this->only = $scene;
+        $this->only = $this->scene[$scene];
         return true;
     }
 
-    // 获取错误信息
+    /**
+     * 获取错误信息
+     *
+     * @return string
+     */
     public function getError()
     {
         return $this->error;

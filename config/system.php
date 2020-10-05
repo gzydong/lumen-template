@@ -2,14 +2,11 @@
 
 /**
  * 自定义的配置信息
- *
  */
 return [
-    // SQL查询日志(生产环境请关闭)
+    // SQL查询日志相关配置
     'sql_query_log' => [
-        // 是否开启
-        'enabled' => env('SQL_QUERY_LOG', false),
-        // 慢查询时间/单位毫秒
-        'slower_than' => env('SQL_QUERY_SLOWER', 0),
+        'enabled'                  => env('SQL_QUERY_LOG', false),   //是否开启
+        'slower_than'              => env('SQL_QUERY_SLOWER', 0),     //慢查询时间/单位毫秒
     ],
 ];

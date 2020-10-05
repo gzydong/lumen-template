@@ -21,7 +21,7 @@ class AuthController extends CController
 
         // 授权中间件
         $this->middleware("auth:{$this->guard}", [
-            'except' => ['logins']
+            'except' => ['login']
         ]);
     }
 
@@ -35,13 +35,21 @@ class AuthController extends CController
     public function login(Request $request)
     {
         // 数据验证
-        $this->validate($request, ['username' => 'required', 'password' => 'required']);
+        $this->validate($request, [
+            'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
+            'password' => 'required'
+        ]);
+
+        // 自定义 Jwt Token 参数
+        $claims = ['platform' => 'app'];
 
         // 登录
-        $token = auth($this->guard)->attempt($request->only(['username', 'password']));
+        $token = auth($this->guard)->claims($claims)->attempt($request->only(['mobile', 'password']));
         if (!$token) {
-            return $this->fail(ResponseCode::AUTHORIZATION_FAIL, '账号不存在或密码填写错误...');
+            return $this->fail(ResponseCode::AUTH_LOGON_FAIL, '账号不存在或密码填写错误...');
         }
+
+        // ... 自定义其它业务
 
         return $this->success([
             'Authentication' => $this->formatToken($token),
@@ -96,5 +104,18 @@ class AuthController extends CController
             'token_type' => 'Bearer',
             'expires_time' => date('Y-m-d H:i:s', $expires_time)
         ];
+    }
+
+    /**
+     * 案例： 获取 token 中相关参数信息
+     *
+     * @return \Tymon\JWTAuth\JWTGuard 更多信息前查看该类
+     */
+    public function example()
+    {
+        // 获取指定的 payload 信息
+        // $platform = auth($this->guard)->payload()->get('platform');
+
+        return auth($this->guard);
     }
 }

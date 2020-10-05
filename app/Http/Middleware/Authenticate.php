@@ -38,7 +38,7 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            throw new AuthorizationException('Unauthenticated');
+            throw new AuthorizationException('未授权登录，禁止访问...');
         }
 
         return $next($request);

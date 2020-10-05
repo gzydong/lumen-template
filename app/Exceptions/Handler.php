@@ -2,8 +2,8 @@
 
 namespace App\Exceptions;
 
-use App\Traits\ResponseTrait;
 use Throwable;
+use App\Traits\ResponseTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -55,14 +55,14 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof MethodNotAllowedHttpException) {
-            return $this->error(ResponseCode::METHOD_NOT_ALLOW, 'The server returned a "405 Method Not Allowed".', [], 405);
+            return $this->error(ResponseCode::METHOD_NOT_ALLOW, "The server returned a '405 Method Not Allowed'.", [], 405);
         } else if ($exception instanceof NotFoundHttpException) {
-            return $this->error(ResponseCode::RESOURCE_NOT_FOUND, 'The server returned a "404 Not Found".".', [], 404);
-        }else if($exception instanceof AuthorizationException){
-            return $this->error(ResponseCode::AUTHORIZATION_FAIL,'Unauthenticated',[],401);
+            return $this->error(ResponseCode::RESOURCE_NOT_FOUND, "The server returned a '404 Not Found'.", [], 404);
+        } else if ($exception instanceof AuthorizationException) {
+            return $this->error(ResponseCode::AUTHORIZATION_FAIL, $exception->getMessage(), [], 401);
+        } else {
+            // ... 自定义其它响应信息
         }
-
-        dd(get_class($exception));
 
         return parent::render($request, $exception);
     }

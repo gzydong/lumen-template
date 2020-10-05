@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: admin
- * Date: 2020/10/4
- * Time: 9:53
- */
-
 namespace App\Providers;
 
 use Illuminate\Database\Events\QueryExecuted;

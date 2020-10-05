@@ -1,22 +1,24 @@
 <?php
 
-
 namespace App\Exceptions;
 
-
 /**
+ * 项目状态码
  *
- * Class Code
  * @package App\Exceptions
  */
 class ResponseCode
 {
-    const SUCCESS                = 200;   // 响应成功返回码
-    const FAIL                   = 10001; // 处理失败返回码
-    const AUTHORIZATION_FAIL     = 10002; // 授权认证失败
-    const AUTHENTICATE_FAIL      = 10003; // 未授权
-    const METHOD_NOT_ALLOW       = 10004; // 请求方式不正确
-    const RESOURCE_NOT_FOUND     = 10005; // 资源找不到
-    const VALIDATION             = 10006; // 数据验证失败
+    // 全局响应状态码
+    const SUCCESS                = 200;   // 接口处理成功
+    const FAIL                   = 305;   // 接口处理失败
+    const AUTHORIZATION_FAIL     = 10001; // 授权验证失败
+    const AUTHENTICATE_FAIL      = 10002; // 权限验证失败
+    const METHOD_NOT_ALLOW       = 10003; // 请求方式不正确
+    const RESOURCE_NOT_FOUND     = 10004; // 请求资源找不到
+    const VALIDATION             = 10005; // 请求数据验证失败
     const SYSTEM_ERROR           = 10009; // 系统错误
+
+    // 登录响应状态码
+    const AUTH_LOGON_FAIL        = 20001; // 授权登失败
 }
