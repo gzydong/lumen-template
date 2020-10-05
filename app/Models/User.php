@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * Class User
  *
- * @property string $username 用户昵称
+ * @property string $nickname 用户昵称
  * @property string $mobile 登录手机号
  * @property string $password 登录密码
  * @property string $avatar 头像
@@ -60,5 +61,15 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * 设置密码
+     *
+     * @param string $value 密码值
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
     }
 }

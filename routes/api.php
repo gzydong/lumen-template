@@ -24,6 +24,9 @@ $router->group([], function () use ($router) {
 
     // 退出登录接口
     $router->get('auth/logout', ['middleware' => [], 'uses' => 'AuthController@logout']);
+
+    // 会员注册接口
+    $router->post('auth/register', ['middleware' => [], 'uses' => 'AuthController@register']);
 });
 
 /**

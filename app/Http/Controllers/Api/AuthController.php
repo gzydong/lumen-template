@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ResponseCode;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends CController
 {
@@ -21,16 +23,16 @@ class AuthController extends CController
 
         // 授权中间件
         $this->middleware("auth:{$this->guard}", [
-            'except' => ['login']
+            'except' => ['login', 'register']
         ]);
     }
 
     /**
-     * 登录接口
+     * 会员手机号登录接口
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
+     * @return JsonResponse
+     * @throws ValidationException
      */
     public function login(Request $request)
     {
@@ -58,30 +60,44 @@ class AuthController extends CController
     }
 
     /**
-     * 注册接口
+     * 会员手机号注册接口
      *
      * @param Request $request
+     * @return JsonResponse
+     * @throws ValidationException
      */
     public function register(Request $request)
     {
-        services()->userService->register($request);
+        // 数据验证
+        $this->validate($request, [
+            'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
+            'password' => 'required'
+        ]);
+
+        [$isTrue, $message, $data] = $this->userService->register($request);
+        if (!$isTrue) {
+            return $this->fail(ResponseCode::REGISTER_FILE, $message);
+        }
+
+        return $this->success([], '账号注册成功...');
     }
 
     /**
-     * 退出接口
+     * 会员退出接口
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function logout()
     {
         auth($this->guard)->logout();
+
         return $this->success([], 'Successfully logged out');
     }
 
     /**
      * 刷新授权token
      *
-     * @return mixed
+     * @return JsonResponse
      */
     public function refresh()
     {
@@ -89,7 +105,7 @@ class AuthController extends CController
     }
 
     /**
-     * 格式话Token数据
+     * 格式化Token数据
      *
      * @param string $token 授权token
      * @return array
@@ -104,18 +120,5 @@ class AuthController extends CController
             'token_type' => 'Bearer',
             'expires_time' => date('Y-m-d H:i:s', $expires_time)
         ];
-    }
-
-    /**
-     * 案例： 获取 token 中相关参数信息
-     *
-     * @return \Tymon\JWTAuth\JWTGuard 更多信息前查看该类
-     */
-    public function example()
-    {
-        // 获取指定的 payload 信息
-        // $platform = auth($this->guard)->payload()->get('platform');
-
-        return auth($this->guard);
     }
 }
