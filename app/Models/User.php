@@ -10,8 +10,9 @@ use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * Class User
+ * Class User Model
  *
+ * @property integer $id 用户ID
  * @property string $nickname 用户昵称
  * @property string $mobile 登录手机号
  * @property string $password 登录密码

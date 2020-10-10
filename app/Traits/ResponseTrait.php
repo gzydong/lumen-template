@@ -31,11 +31,8 @@ Trait ResponseTrait
      */
     public function success($data = [], $message = 'OK')
     {
-        return response()->json([
-            'code' => ResponseCode::SUCCESS,
-            'message' => $message,
-            'data' => $data
-        ], 200);
+        $code = ResponseCode::SUCCESS;
+        return response()->json(compact('code', 'message', 'data'), 200);
     }
 
     /**

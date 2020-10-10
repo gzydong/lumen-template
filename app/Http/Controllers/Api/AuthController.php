@@ -23,6 +23,7 @@ class AuthController extends CController
 
         // 授权中间件
         $this->middleware("auth:{$this->guard}", [
+            // 不用进行登录验证的方法
             'except' => ['login', 'register']
         ]);
     }
@@ -38,7 +39,7 @@ class AuthController extends CController
     {
         // 数据验证
         $this->validate($request, [
-            'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
+            'mobile' => "required|regex:/^1[345789][0-9]{9}$/",
             'password' => 'required'
         ]);
 
@@ -76,7 +77,7 @@ class AuthController extends CController
 
         [$isTrue, $message, $data] = $this->userService->register($request);
         if (!$isTrue) {
-            return $this->fail(ResponseCode::REGISTER_FILE, $message);
+            return $this->fail(ResponseCode::REGISTER_FAIL, $message);
         }
 
         return $this->success([], '账号注册成功...');
@@ -118,7 +119,7 @@ class AuthController extends CController
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_time' => date('Y-m-d H:i:s', $expires_time)
+            'expires_time' => $expires_time
         ];
     }
 }

@@ -77,7 +77,8 @@ $app->configure('system');
 
 // 全局中间件
 $app->middleware([
-    App\Http\Middleware\ExampleMiddleware::class
+    App\Http\Middleware\CorsMiddleware::class,
+    // App\Http\Middleware\ExampleMiddleware::class,
 ]);
 
 // 注册路由中间件

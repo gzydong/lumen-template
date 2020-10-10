@@ -46,13 +46,27 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Throwable $exception
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
-     *
-     * @throws \Throwable
+     * @param \Illuminate\Http\Request $request
+     * @param Throwable $exception
+     * @return bool|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws Throwable
      */
     public function render($request, Throwable $exception)
+    {
+        if ($result = $this->renderJson($exception)) {
+            return $result;
+        }
+
+        return parent::render($request, $exception);
+    }
+
+    /**
+     * 自定义响应错误信息
+     *
+     * @param Throwable $exception
+     * @return bool|\Illuminate\Http\JsonResponse
+     */
+    public function renderJson(Throwable $exception)
     {
         if ($exception instanceof MethodNotAllowedHttpException) {
             return $this->error(ResponseCode::METHOD_NOT_ALLOW, "The server returned a '405 Method Not Allowed'.", [], 405);
@@ -64,6 +78,6 @@ class Handler extends ExceptionHandler
             // ... 自定义其它响应信息
         }
 
-        return parent::render($request, $exception);
+        return false;
     }
 }

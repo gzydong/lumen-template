@@ -3,8 +3,9 @@
 namespace App\Exceptions;
 
 /**
- * 项目状态码
+ * 响应状态码
  *
+ * Class ResponseCode
  * @package App\Exceptions
  */
 class ResponseCode
@@ -23,5 +24,5 @@ class ResponseCode
     const AUTH_LOGON_FAIL        = 20001; // 授权登失败
 
     // 注册失败响应码
-    const REGISTER_FILE          = 20002; // 手机号注册失败
+    const REGISTER_FAIL          = 20002; // 手机号注册失败
 }

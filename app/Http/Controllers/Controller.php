@@ -7,7 +7,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
 use App\Exceptions\ResponseCode;
-use \Illuminate\Contracts\Auth\Authenticatable;
 
 /**
  * 控制器基类（前后端共用）
