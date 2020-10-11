@@ -27,7 +27,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     use Authenticatable, Authorizable;
 
     /**
-     * The attributes that are mass assignable.
+     * 可批量填充的属性
      *
      * @var array
      */

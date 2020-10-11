@@ -84,6 +84,7 @@ $app->middleware([
 // 注册路由中间件
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'throttle' => App\Http\Middleware\ThrottleMiddleware::class,
 ]);
 
 /*
@@ -98,13 +99,22 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-$app->register(App\Providers\AuthServiceProvider::class);
+//$app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\QueryLoggerServiceProvider::class);
 
 // 注册Jwt授权服务
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
+//注册redis服务
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
+/*
+|--------------------------------------------------------------------------
+| Register Alias
+|--------------------------------------------------------------------------
+*/
+//新增，解决Lumen的Cache问题
+//$app->alias('cache', 'Illuminate\Cache\CacheManager');
 
 /*
 |--------------------------------------------------------------------------

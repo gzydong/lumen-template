@@ -37,20 +37,17 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
      */
     protected $guarded = ['id'];
 
-    /**
-     * 账号状态:正常状态
-     */
-    const STATUS_ENABLES = 10;
+    // 管理员状态
+    const STATUS_ENABLES = 10; // 正常状态
+    const STATUS_DISABLES = 0; // 禁用状态
+    const STATUS_DELETE = -1;  // 删除状态
 
-    /**
-     * 账号状态:禁用状态
-     */
-    const STATUS_DISABLES = 0;
-
-    /**
-     * 账号状态:删除状态
-     */
-    const STATUS_DELETE = -1;
+    // 管理员状态 - 地图
+    public static $status_map = [
+        self::STATUS_ENABLES => '正常状态',
+        self::STATUS_DISABLES => '禁用状态',
+        self::STATUS_DELETE => '删除状态'
+    ];
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -81,11 +78,4 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
     {
         $this->attributes['password'] = Hash::make($value);
     }
-
-    /**
-     * 执行模型是否自动维护时间戳.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 }

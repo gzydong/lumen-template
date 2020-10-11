@@ -5,8 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ResponseCode;
 use App\Http\Validators\ExampleValidate;
 use App\Services\UserService;
+use Illuminate\Cache\RateLimiter;
 use Illuminate\Http\Request;
 
+/**
+ * 使用案例
+ *
+ * Class ExampleController
+ * @package App\Http\Controllers\Api
+ */
 class ExampleController extends CController
 {
     /**
@@ -59,5 +66,10 @@ class ExampleController extends CController
         if (!$exampleValidate->scene('delete3')->check($request->all())) {
             return $this->fail(ResponseCode::VALIDATION, $exampleValidate->getError());
         }
+    }
+
+    public function test(){
+//        dd(app('redis')->get('asd'));
+        return $this->success(['asdfas']);
     }
 }
