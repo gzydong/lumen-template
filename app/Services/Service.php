@@ -11,6 +11,7 @@ use Illuminate\Container\Container;
  * 案例： services()->userService->example()
  *
  * @property UserService $userService
+ * @property RbacService $rbacService
  * @package App\Services
  */
 final class Service
@@ -21,7 +22,8 @@ final class Service
      * @var array
      */
     private $childService = [
-        'userService' => UserService::class
+        'userService' => UserService::class,
+        'rbacService'=>RbacService::class,
     ];
 
     /**

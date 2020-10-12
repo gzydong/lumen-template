@@ -4,6 +4,11 @@ namespace App\Repositorys;
 
 use App\Models\User;
 
+/**
+ * Class UserRepository
+ *
+ * @package App\Repositorys
+ */
 class UserRepository
 {
     public function __construct()

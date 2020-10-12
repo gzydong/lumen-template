@@ -9,6 +9,8 @@ use App\Models\BaseModel;
  *
  * @property int $permission_id 权限ID
  * @property int $role_id 角色ID
+ *
+ * @package App\Models\Rbac
  */
 class RolePermission extends BaseModel
 {

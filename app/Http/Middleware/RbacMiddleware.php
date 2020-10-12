@@ -12,7 +12,7 @@ class RbacMiddleware
     /**
      * The authentication guard factory instance.
      *
-     * @var \Illuminate\Contracts\Auth\Factory
+     * @var Auth
      */
     protected $auth;
 
@@ -26,8 +26,7 @@ class RbacMiddleware
     /**
      * Create a new middleware instance.
      *
-     * @param \Illuminate\Contracts\Auth\Factory $auth
-     * @return void
+     * @param Auth $auth
      */
     public function __construct(Auth $auth)
     {
@@ -53,7 +52,7 @@ class RbacMiddleware
         $admin = $this->auth->guard($this->guard)->user();
 
         // 判断是否有访问权限
-        if (!$admin->hasPerm($request->path())) {
+        if (!$admin->hasPerms($request->path())) {
             throw new HttpException(403, '当前登录用户，暂无访问权限!!!');
         }
 

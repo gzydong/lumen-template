@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Admin;
-use App\Models\Rbac\Role;
+
 use Illuminate\Http\Request;
 
 /**
@@ -29,8 +28,8 @@ class RbacController extends CController
 
     }
 
-    public function test(Request $request){
-        $role = Role::where('id',2)->first();
-        dd($role->delete());
+    public function test(Request $request)
+    {
+        services()->rbacService->giveRolePermission(1, [1, 2]);
     }
 }

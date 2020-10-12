@@ -9,6 +9,8 @@ use App\Models\BaseModel;
  *
  * @property int $admin_id 管理员用户ID
  * @property int $role_id 角色ID
+ *
+ * @package App\Models\Rbac
  */
 class RoleAdmin extends BaseModel
 {

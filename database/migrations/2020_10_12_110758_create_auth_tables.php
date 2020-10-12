@@ -5,6 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
+//https://www.cnblogs.com/eleven24/p/9380514.html
+//https://my.oschina.net/u/3372402/blog/4417940
 class CreateAuthTables extends Migration
 {
     /**
@@ -26,7 +28,6 @@ class CreateAuthTables extends Migration
 
         // Create table for storing roles
         Schema::create($rolesTable, function (Blueprint $table) {
-            $table->engine = 'InnoDB';
             $table->increments('id')->comment('角色ID');
             $table->string('name')->unique()->comment('角色名');
             $table->string('display_name')->nullable()->comment('角色显示名称');
@@ -41,7 +42,6 @@ class CreateAuthTables extends Migration
 
         // Create table for associating roles to users (Many-to-Many)
         Schema::create($roleUserTable, function (Blueprint $table) use ($userKeyName, $rolesTable, $usersTable) {
-            $table->engine = 'InnoDB';
             $table->bigInteger('admin_id')->unsigned()->comment('管理员用户ID');
             $table->integer('role_id')->unsigned()->comment('角色ID');
 
@@ -57,8 +57,7 @@ class CreateAuthTables extends Migration
 
         // Create table for storing permissions
         Schema::create($permissionsTable, function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->increments('id');
+            $table->increments('id')->comment('权限ID');
             $table->string('route')->unique()->comment('权限路由');
             $table->string('display_name')->nullable()->comment('权限显示名称');
             $table->string('description')->nullable()->comment('权限描述');
@@ -72,11 +71,11 @@ class CreateAuthTables extends Migration
 
         // Create table for associating permissions to roles (Many-to-Many)
         Schema::create($permissionRoleTable, function (Blueprint $table) use ($permissionsTable, $rolesTable) {
-            $table->engine = 'InnoDB';
-            $table->integer('permission_id')->unsigned()->comment('权限ID');
             $table->integer('role_id')->unsigned()->comment('角色ID');
-            $table->foreign('permission_id')->references('id')->on($permissionsTable)->onUpdate('cascade')->onDelete('cascade');
+            $table->integer('permission_id')->unsigned()->comment('权限ID');
+
             $table->foreign('role_id')->references('id')->on($rolesTable)->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('permission_id')->references('id')->on($permissionsTable)->onUpdate('cascade')->onDelete('cascade');
             $table->primary(['permission_id', 'role_id']);
 
             $table->charset = 'utf8';

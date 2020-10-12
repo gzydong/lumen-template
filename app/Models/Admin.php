@@ -22,6 +22,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $last_login_ip 最后一次登录IP
  * @property integer $created_at 创建时间
  * @property integer $updated_at 更新时间
+ *
  * @package App\Models
  */
 class Admin extends BaseModel implements AuthenticatableContract, AuthorizableContract, JWTSubject
@@ -117,7 +118,7 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
      * @param string $route 路由地址
      * @return bool
      */
-    public function hasPerm($route)
+    public function hasPerms($route)
     {
         // 获取当前用户所有角色ID
         $role_ids = $this->roles()->pluck('id')->toArray();
@@ -133,5 +134,26 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
         }
 
         return false;
+    }
+
+    /**
+     * 移除用户的一个角色
+     *
+     * @param int|array $role
+     * @return int
+     */
+    public function detachRole($role)
+    {
+        return $this->roles()->detach($role);
+    }
+
+    /**
+     * 移除用户的所有角色
+     *
+     * @return int
+     */
+    public function detachRoleAll()
+    {
+        return $this->roles()->detach();
     }
 }

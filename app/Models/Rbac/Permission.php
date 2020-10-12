@@ -13,6 +13,8 @@ use App\Models\BaseModel;
  * @property string|null $description 权限描述
  * @property string|null $created_at
  * @property string|null $updated_at
+ *
+ * @package App\Models\Rbac
  */
 class Permission extends BaseModel
 {
