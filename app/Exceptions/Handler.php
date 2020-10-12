@@ -74,6 +74,8 @@ class Handler extends ExceptionHandler
             return $this->error(ResponseCode::RESOURCE_NOT_FOUND, "The server returned a '404 Not Found'.", [], 404);
         } else if ($exception instanceof AuthorizationException) {
             return $this->error(ResponseCode::AUTHORIZATION_FAIL, $exception->getMessage(), [], 401);
+        } else if ($exception instanceof HttpException) {
+            return $this->error(ResponseCode::AUTHENTICATE_FAIL, $exception->getMessage(), [], 403);
         } else {
             // ... 自定义其它响应信息
         }

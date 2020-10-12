@@ -19,7 +19,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $avatar 头像
  * @property integer $gender 性别
  * @property integer $created_at 注册时间
- *
  * @package App\Models
  */
 class User extends BaseModel implements AuthenticatableContract, AuthorizableContract, JWTSubject

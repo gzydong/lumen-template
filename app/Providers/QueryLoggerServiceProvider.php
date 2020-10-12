@@ -34,7 +34,7 @@ class QueryLoggerServiceProvider extends ServiceProvider
                 $realSql = vsprintf($sqlWithPlaceholders, array_map([$pdo, 'quote'], $bindings));
             }
 
-            Log::debug(sprintf('[%s] [%s] %s | %s: %s', $query->connection->getDatabaseName(), $duration, $realSql, request()->method(), request()->getRequestUri()));
+            Log::debug(sprintf('[%s] [%s] %s | %s: %s', $query->connection->getDatabaseName(), $duration, $realSql, request()->method(), request()->path()));
         });
     }
 

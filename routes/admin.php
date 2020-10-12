@@ -20,3 +20,12 @@ $router->group([], function () use ($router) {
     // 退出登录接口
     $router->get('auth/logout', ['middleware' => [], 'uses' => 'AuthController@logout']);
 });
+
+
+/**
+ * RbacController 控制器分组
+ */
+$router->group([], function () use ($router) {
+    // 授权登录接口
+    $router->get('rbac/test', ['middleware' => ['admin_permissions'], 'uses' => 'RbacController@test']);
+});

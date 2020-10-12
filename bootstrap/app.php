@@ -85,6 +85,7 @@ $app->middleware([
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'throttle' => App\Http\Middleware\ThrottleMiddleware::class,
+    'admin_permissions' => App\Http\Middleware\RbacMiddleware::class,
 ]);
 
 /*
@@ -99,22 +100,29 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-//$app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
+
+// SQL 查询日志服务
 $app->register(App\Providers\QueryLoggerServiceProvider::class);
 
-// 注册Jwt授权服务
+// Jwt授权服务
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
-//注册redis服务
+// Redis服务
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
+
+// 代码提示工具
+if ($app->environment() !== 'production') {
+//    $app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+}
+
 /*
 |--------------------------------------------------------------------------
 | Register Alias
 |--------------------------------------------------------------------------
 */
 //新增，解决Lumen的Cache问题
-//$app->alias('cache', 'Illuminate\Cache\CacheManager');
+$app->alias('cache', 'Illuminate\Cache\CacheManager');
 
 /*
 |--------------------------------------------------------------------------

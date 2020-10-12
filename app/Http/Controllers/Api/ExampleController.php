@@ -8,6 +8,7 @@ use App\Services\UserService;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Http\Request;
 
+
 /**
  * 使用案例
  *
@@ -66,10 +67,5 @@ class ExampleController extends CController
         if (!$exampleValidate->scene('delete3')->check($request->all())) {
             return $this->fail(ResponseCode::VALIDATION, $exampleValidate->getError());
         }
-    }
-
-    public function test(){
-//        dd(app('redis')->get('asd'));
-        return $this->success(['asdfas']);
     }
 }
