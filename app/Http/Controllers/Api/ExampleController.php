@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ResponseCode;
 use App\Http\Validators\ExampleValidate;
 use App\Services\UserService;
-use Illuminate\Cache\RateLimiter;
 use Illuminate\Http\Request;
 
 

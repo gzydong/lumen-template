@@ -88,6 +88,8 @@ class AccountController extends CController
      */
     public function updateAccount(Request $request)
     {
-
+        $this->validate($request, [
+            'email' => 'present|email',
+        ]);
     }
 }
