@@ -18,4 +18,8 @@ class RoleAdmin extends BaseModel
      * @var string 定义表名字
      */
     protected $table = 'role_admin';
+
+    protected $primaryKey = 'admin_id';
+
+    protected $fillable = ['role_id','admin_id'];
 }

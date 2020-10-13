@@ -10,11 +10,13 @@ use Illuminate\Container\Container;
  * 服务处理层（通过链式操作简化手动注入依赖）
  * 案例： services()->userService->example()
  *
- * @property UserService $userService
- * @property RbacService $rbacService
+ * @property UserService $userService 会员用户服务
+ * @property RbacService $rbacService 权限管理服务
+ * @property AdminService $adminService 管理员服务
+ *
  * @package App\Services
  */
-final class Service
+class Service
 {
     /**
      * 服务列表(需要手配置)
@@ -23,7 +25,8 @@ final class Service
      */
     private $childService = [
         'userService' => UserService::class,
-        'rbacService'=>RbacService::class,
+        'rbacService' => RbacService::class,
+        'adminService' => AdminService::class,
     ];
 
     /**

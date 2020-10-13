@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Admin;
 use App\Models\Rbac\Role;
+use App\Models\Rbac\RoleAdmin;
 use App\Repositorys\RoleRepository;
 use App\Repositorys\PermissionRepository;
 use Illuminate\Http\Request;
@@ -57,7 +59,7 @@ class RbacService
     public function editRole(Request $request)
     {
         $data = $request->only(['name', 'display_name', 'description']);
-        return $this->roleRepository->edit($request->input('id'), $data);
+        return $this->roleRepository->edit($request->input('role_id'), $data);
     }
 
     /**
@@ -80,7 +82,7 @@ class RbacService
      */
     public function giveRolePermission(int $role_id, array $permissions)
     {
-        $role = Role::find($role_id);
+        $role = Role::where('id', $role_id)->first();
         return $role ? $role->syncPerm($permissions) : false;
     }
 
@@ -117,5 +119,30 @@ class RbacService
     public function deletePermission(int $permission_id)
     {
         return $this->permissionRepository->delete($permission_id);
+    }
+
+    /**
+     * 赋予管理员角色及独立权限信息
+     *
+     * @param int $admin_id 管理员ID
+     * @param int $role_id 角色ID
+     * @param array $permissions 独立权限列表
+     *
+     * @return bool
+     */
+    public function giveAdminRole(int $admin_id, int $role_id, array $permissions = [])
+    {
+        try {
+            RoleAdmin::updateOrCreate(['admin_id' => $admin_id], ['role_id' => $role_id]);
+
+            $admin = Admin::where('id', $admin_id)->first();
+            // 同步管理员独立权限
+            $admin->perms()->sync($permissions);
+        } catch (\Exception $e) {
+            app('log')->error($e->getMessage(), ['exception' => $e]);
+            return false;
+        }
+
+        return true;
     }
 }

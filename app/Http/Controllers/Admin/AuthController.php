@@ -47,6 +47,9 @@ class AuthController extends CController
             return $this->fail(ResponseCode::AUTH_LOGON_FAIL, '账号不存在或密码填写错误...');
         }
 
+        // 处理其它登录业务逻辑
+        services()->adminService->login($credentials);
+
         return $this->success([
             'Authentication' => $this->formatToken($token),
             'admin_info' => '',

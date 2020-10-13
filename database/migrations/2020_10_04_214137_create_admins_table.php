@@ -16,7 +16,7 @@ class CreateAdminsTable extends Migration
     {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
-            $table->string('username', 30)->default('')->comment('管理员账号');
+            $table->string('username', 30)->unique()->comment('管理员账号');
             $table->string('password', 100)->default('')->comment('登录密码');
             $table->boolean('status')->default(10)->comment('账号状态[-1:已删除;0:已禁用;10:正常;]');
             $table->integer('last_login_time')->default(0)->comment('最后一次登录时间');

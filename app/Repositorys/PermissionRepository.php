@@ -1,13 +1,12 @@
 <?php
 
-
 namespace App\Repositorys;
 
 use App\Models\Rbac\Permission;
+use Exception;
 
 class PermissionRepository
 {
-
     /**
      * 添加权限信息
      *
@@ -16,12 +15,15 @@ class PermissionRepository
      */
     public function create(array $data)
     {
-        $result = new Permission();
-        $result->route = $data['route'];
-        $result->display_name = $data['display_name'];
-        $result->description = $data['description'];
-
-        return $result->save();
+        try {
+            $result = new Permission();
+            $result->route = $data['route'];
+            $result->display_name = $data['display_name'];
+            $result->description = $data['description'];
+            return $result->save();
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -33,7 +35,11 @@ class PermissionRepository
      */
     public function edit(int $permission_id, array $data)
     {
-        return Permission::where('id', $permission_id)->update($data);
+        try {
+            return Permission::where('id', $permission_id)->update($data);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**

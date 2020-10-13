@@ -2,8 +2,8 @@
 
 namespace App\Models\Rbac;
 
+use App\Models\Admin;
 use App\Models\BaseModel;
-use App\Models\User;
 
 /**
  * App\Models\Rbac\Role
@@ -24,19 +24,20 @@ class Role extends BaseModel
      */
     protected $table = 'roles';
 
+    public $timestamps = true;
+
     /**
-     * Many-to-Many relations with the user model.
+     * 获得此角色下的用户
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function admins()
     {
-        return $this->belongsToMany(User::class, 'role_admin', 'role_id', 'admin_id');
+        return $this->belongsToMany(Admin::class, 'role_admin', 'role_id', 'admin_id');
     }
 
     /**
-     * Many-to-Many relations with the permission model.
-     * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
+     * 获得此角色下的权限
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

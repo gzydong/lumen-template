@@ -51,8 +51,8 @@ class RbacMiddleware
         // 获取登录用户信息
         $admin = $this->auth->guard($this->guard)->user();
 
-        // 判断是否有访问权限
-        if (!$admin->hasPerms($request->path())) {
+        // 判断是否有访问权限(admin 跳过权限验证)
+        if ($admin->username !== 'admin' && !$admin->hasPerms($request->path())) {
             throw new HttpException(403, '当前登录用户，暂无访问权限!!!');
         }
 

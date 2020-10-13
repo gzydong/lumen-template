@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Rbac\Role;
+use App\Models\Rbac\Permission;
+use App\Models\Rbac\RoleAdmin;
 use App\Models\Rbac\RolePermission;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -45,13 +46,23 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
     const STATUS_DELETE = -1;  // 删除状态
 
     /**
-     * Many-to-Many relations with Role.
+     * 获取管理员角色信息(一个管理员只有一个角色)
+     *
+     * @return mixed
+     */
+    public function role()
+    {
+        return RoleAdmin::join('roles', 'roles.id', '=', 'role_admin.role_id')->where('admin_id', $this->id)->first(['roles.*']);
+    }
+
+    /**
+     * 获得管理员的独立权限
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function roles()
+    public function perms()
     {
-        return $this->belongsToMany(Role::class, 'role_admin', 'admin_id', 'role_id');
+        return $this->belongsToMany(Permission::class, 'admin_permissions', 'admin_id', 'permission_id');
     }
 
     /**
@@ -102,17 +113,6 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
     }
 
     /**
-     * 检测管理员是否拥有指定角色权限
-     *
-     * @param string $role_name 角色名
-     * @return bool
-     */
-    public function hasRole($role_name)
-    {
-        return $this->roles()->where('roles.name', $role_name)->exists();
-    }
-
-    /**
      * 检测管理员是否有权限
      *
      * @param string $route 路由地址
@@ -120,15 +120,19 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
      */
     public function hasPerms($route)
     {
-        // 获取当前用户所有角色ID
-        $role_ids = $this->roles()->pluck('id')->toArray();
+        // 获取管理员管理角色信息
+        $roleInfo = $this->role();
 
-        if (!$role_ids) return false;
+        if ($roleInfo) {
+            // 获取角色对应的权限
+            $permissions = RolePermission::join('permissions', 'permissions.id', '=', 'role_permission.permission_id')->where('role_permission.role_id', $roleInfo->id)->pluck('permissions.route');
+            foreach ($permissions as $permission) {
+                if ($route == $permission) return true;
+            }
+        }
 
-        $permissions = RolePermission::join('permissions', 'permissions.id', '=', 'role_permission.permission_id')
-            ->whereIn('role_permission.role_id', $role_ids)
-            ->pluck('permissions.route');
-
+        // 查询管理员独立权限
+        $permissions = $this->perms()->pluck('permissions.route');
         foreach ($permissions as $permission) {
             if ($route == $permission) return true;
         }

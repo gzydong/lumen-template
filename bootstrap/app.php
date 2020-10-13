@@ -111,11 +111,6 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 // Redis服务
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
 
-// 代码提示工具
-if ($app->environment() !== 'production') {
-//    $app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
-}
-
 /*
 |--------------------------------------------------------------------------
 | Register Alias

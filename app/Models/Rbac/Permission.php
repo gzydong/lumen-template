@@ -23,6 +23,8 @@ class Permission extends BaseModel
      */
     protected $table = 'permissions';
 
+    public $timestamps = true;
+
     /**
      * Many-to-Many relations with role model.
      *

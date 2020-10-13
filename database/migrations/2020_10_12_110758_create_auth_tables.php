@@ -20,13 +20,13 @@ class CreateAuthTables extends Migration
         $roleUserTable = 'role_admin';
         $permissionsTable = 'permissions';
         $permissionRoleTable = 'role_permission';
+        $adminPermissions = 'admin_permissions';
 
         $userModel = new \App\Models\Admin();
         $userKeyName = $userModel->getKeyName();
         $usersTable = $userModel->getTable();
-        $prefix = DB::getConfig('prefix');
 
-        // Create table for storing roles
+
         Schema::create($rolesTable, function (Blueprint $table) {
             $table->increments('id')->comment('角色ID');
             $table->string('name')->unique()->comment('角色名');
@@ -38,11 +38,9 @@ class CreateAuthTables extends Migration
             $table->collation = 'utf8_general_ci';
             $table->engine = 'InnoDB';
         });
-        DB::statement("ALTER TABLE `{$prefix}{$rolesTable}` comment 'RBAC - 角色表'");
 
-        // Create table for associating roles to users (Many-to-Many)
         Schema::create($roleUserTable, function (Blueprint $table) use ($userKeyName, $rolesTable, $usersTable) {
-            $table->bigInteger('admin_id')->unsigned()->comment('管理员用户ID');
+            $table->bigInteger('admin_id')->unsigned()->unique()->comment('管理员用户ID');
             $table->integer('role_id')->unsigned()->comment('角色ID');
 
             $table->foreign('admin_id')->references($userKeyName)->on($usersTable)->onUpdate('cascade')->onDelete('cascade');
@@ -53,9 +51,7 @@ class CreateAuthTables extends Migration
             $table->collation = 'utf8_general_ci';
             $table->engine = 'InnoDB';
         });
-        DB::statement("ALTER TABLE `{$prefix}{$roleUserTable}` comment 'RBAC - 角色、用户关联表'");
 
-        // Create table for storing permissions
         Schema::create($permissionsTable, function (Blueprint $table) {
             $table->increments('id')->comment('权限ID');
             $table->string('route')->unique()->comment('权限路由');
@@ -67,9 +63,7 @@ class CreateAuthTables extends Migration
             $table->collation = 'utf8_general_ci';
             $table->engine = 'InnoDB';
         });
-        DB::statement("ALTER TABLE `{$prefix}{$permissionsTable}` comment 'RBAC - 权限表'");
 
-        // Create table for associating permissions to roles (Many-to-Many)
         Schema::create($permissionRoleTable, function (Blueprint $table) use ($permissionsTable, $rolesTable) {
             $table->integer('role_id')->unsigned()->comment('角色ID');
             $table->integer('permission_id')->unsigned()->comment('权限ID');
@@ -82,6 +76,19 @@ class CreateAuthTables extends Migration
             $table->collation = 'utf8_general_ci';
             $table->engine = 'InnoDB';
         });
+
+        Schema::create($adminPermissions, function (Blueprint $table) use ($permissionsTable) {
+            $table->unsignedBigInteger('admin_id')->comment('管理员ID');
+            $table->integer('permission_id')->unsigned()->comment('权限ID');
+
+            $table->foreign('permission_id')->references('id')->on($permissionsTable)->onDelete('cascade');
+            $table->primary(['permission_id', 'admin_id'], 'permission_id_admin_id');
+        });
+
+        $prefix = DB::getConfig('prefix');
+        DB::statement("ALTER TABLE `{$prefix}{$rolesTable}` comment 'RBAC - 角色表'");
+        DB::statement("ALTER TABLE `{$prefix}{$roleUserTable}` comment 'RBAC - 角色、用户关联表'");
+        DB::statement("ALTER TABLE `{$prefix}{$permissionsTable}` comment 'RBAC - 权限表'");
         DB::statement("ALTER TABLE `{$prefix}{$permissionRoleTable}` comment 'RBAC - 角色、权限关联表'");
     }
 
@@ -96,5 +103,6 @@ class CreateAuthTables extends Migration
         Schema::drop('role_admin');
         Schema::drop('role_permission');
         Schema::drop('permissions');
+        Schema::drop('admin_permissions');
     }
 }

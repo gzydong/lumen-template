@@ -11,11 +11,6 @@ use App\Models\User;
  */
 class UserRepository
 {
-    public function __construct()
-    {
-
-    }
-
     /**
      * 通过用户ID查询用户信息
      *
