@@ -20,6 +20,10 @@ class UserService
      */
     protected $userRepository;
 
+    /**
+     * UserService constructor.
+     * @param UserRepository $userRepository
+     */
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
@@ -27,7 +31,7 @@ class UserService
 
     public function example()
     {
-        $user = $this->userRepository->findById(1);
+        return $this->userRepository->findById(1);
     }
 
     /**

@@ -7,7 +7,6 @@ use App\Http\Validators\ExampleValidate;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 
-
 /**
  * 使用案例
  *

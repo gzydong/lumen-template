@@ -19,6 +19,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $username 管理员登录账号/登录名
  * @property string $password 登录密码
  * @property integer $status 账号状态[-1:已删除;0:已禁用;10:正常;]
+ * @property string $avatar 管理员头像
+ * @property string $email 管理员邮箱
  * @property string $last_login_time 最后一次登录时间
  * @property string $last_login_ip 最后一次登录IP
  * @property integer $created_at 创建时间
@@ -34,11 +36,6 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
      * @var string 定义表名字
      */
     protected $table = 'admins';
-
-    /**
-     * @var array 批量赋值的黑名单
-     */
-    protected $guarded = ['id'];
 
     // 管理员状态
     const STATUS_ENABLES = 10; // 正常状态

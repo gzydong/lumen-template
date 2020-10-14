@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Admin;
-use App\Models\Rbac\Role;
 use App\Models\Rbac\RoleAdmin;
 use App\Repositorys\RoleRepository;
 use App\Repositorys\PermissionRepository;
@@ -82,7 +81,7 @@ class RbacService
      */
     public function giveRolePermission(int $role_id, array $permissions)
     {
-        $role = Role::where('id', $role_id)->first();
+        $role = $this->roleRepository->findById($role_id);
         return $role ? $role->syncPerm($permissions) : false;
     }
 

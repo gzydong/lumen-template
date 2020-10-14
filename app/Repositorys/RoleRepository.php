@@ -52,4 +52,16 @@ class RoleRepository
     {
         return Role::where('id', $role_id)->delete();
     }
+
+    /**
+     * 获取角色信息
+     *
+     * @param int $role_id 角色ID
+     * @param array $filed 查询字段
+     * @return mixed
+     */
+    public function findById(int $role_id, $filed = ['*'])
+    {
+        return Role::where('id', $role_id)->first($filed);
+    }
 }

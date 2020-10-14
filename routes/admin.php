@@ -22,18 +22,27 @@ $router->group([], function () use ($router) {
 });
 
 /**
- * AdminController 控制器分组
+ * AccountController 控制器分组
  */
 $router->group([], function () use ($router) {
-    // 授权登录接口
-    $router->post('account/update-password', ['middleware' => [], 'uses' => 'AccountController@updatePassword']);
-    $router->post('account/update-status', ['middleware' => ['admin_permissions'], 'uses' => 'AccountController@updateStatus']);
+    $router->post('account/update-password', ['uses' => 'AccountController@updatePassword']);
+    $router->post('account/update-account', ['uses' => 'AccountController@updateAccount']);
+});
+
+/**
+ * AdminsController 控制器分组
+ */
+$router->group([], function () use ($router) {
+    $router->post('admins/create', ['uses' => 'AdminsController@updatePassword']);
+    $router->post('admins/update-password', ['uses' => 'AdminsController@updatePassword']);
+    $router->post('admins/update-status', ['uses' => 'AdminsController@updateStatus']);
+    $router->get('admins/lists', ['uses' => 'AdminsController@lists']);
 });
 
 /**
  * RbacController 控制器分组
  */
-$router->group(['middleware' => ['admin_permissions']], function () use ($router) {
+$router->group(['middleware' => []], function () use ($router) {
     // 角色相关接口
     $router->post('rbac/create-role', ['middleware' => [], 'uses' => 'RbacController@createRole']);
     $router->post('rbac/edit-role', ['middleware' => [], 'uses' => 'RbacController@editRole']);

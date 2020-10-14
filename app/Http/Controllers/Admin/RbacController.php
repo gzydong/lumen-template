@@ -13,6 +13,18 @@ use Illuminate\Http\Request;
 class RbacController extends CController
 {
     /**
+     * 控制器初始化...
+     */
+    public function __construct()
+    {
+        // 登录验证
+        $this->middleware("auth:{$this->guard}");
+
+        // 权限验证中间件
+        $this->middleware("admin_permissions");
+    }
+
+    /**
      * 添加角色信息
      *
      * @param Request $request

@@ -18,10 +18,10 @@ class AdminsTableSeeder extends Seeder
             'username' => 'admin',
             'password' => Hash::make('admin888'),
             'status' => Admin::STATUS_ENABLES,
-            'last_login_time' => time(),
+            'last_login_time' => date('Y-m-d H:i:s'),
             'last_login_ip' => '127.0.0.1',
-            'created_at' => time(),
-            'updated_at' => time()
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
         ]);
     }
 }
