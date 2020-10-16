@@ -18,7 +18,7 @@ $router->group([], function () use ($router) {
     $router->post('auth/login', ['middleware' => [], 'uses' => 'AuthController@login']);
 
     // 退出登录接口
-    $router->get('auth/logout', ['middleware' => [], 'uses' => 'AuthController@logout']);
+    $router->post('auth/logout', ['middleware' => [], 'uses' => 'AuthController@logout']);
 });
 
 /**
@@ -33,7 +33,7 @@ $router->group([], function () use ($router) {
  * AdminsController 控制器分组
  */
 $router->group([], function () use ($router) {
-    $router->post('admins/create', ['uses' => 'AdminsController@updatePassword']);
+    $router->post('admins/create', ['uses' => 'AdminsController@create']);
     $router->post('admins/update-password', ['uses' => 'AdminsController@updatePassword']);
     $router->post('admins/update-status', ['uses' => 'AdminsController@updateStatus']);
     $router->get('admins/lists', ['uses' => 'AdminsController@lists']);

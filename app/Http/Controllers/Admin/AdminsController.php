@@ -30,9 +30,9 @@ class AdminsController extends CController
     public function create(Request $request)
     {
         $this->validate($request, [
-            'username' => 'require',
-            'password' => 'require',
-            'password2' => 'require',
+            'username' => 'required',
+            'password' => 'required',
+            'password2' => 'required',
         ]);
 
         $result = services()->adminService->create($request);
@@ -108,6 +108,6 @@ class AdminsController extends CController
         ]);
 
         $result = services()->adminService->getAdmins($request);
-        return $this->success([$result]);
+        return $this->success($result);
     }
 }

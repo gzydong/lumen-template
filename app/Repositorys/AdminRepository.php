@@ -18,6 +18,6 @@ class AdminRepository
      */
     public function admins(array $params)
     {
-        return Admin::get();
+        return Admin::get()->toArray();
     }
 }

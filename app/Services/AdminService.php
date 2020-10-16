@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Admin;
 use App\Repositorys\AdminRepository;
+use App\Traits\PagingTrait;
 use Illuminate\Http\Request;
 use Exception;
 
@@ -13,6 +14,8 @@ class AdminService
      * @var AdminRepository
      */
     protected $adminRepository;
+
+    use PagingTrait;
 
     public function __construct(AdminRepository $adminRepository)
     {
@@ -45,6 +48,7 @@ class AdminService
             $admin->username = $request->input('username');
             $admin->password = $request->input('password');
             $admin->status = Admin::STATUS_ENABLES;
+            $admin->last_login_time = date('Y-m-d H:i:s');
             $admin->created_at = date('Y-m-d H:i:s');
             $admin->updated_at = date('Y-m-d H:i:s');
             return $admin->save();
@@ -75,8 +79,10 @@ class AdminService
     {
         $params = [];
 
-        $result = $this->adminRepository->admins($params);
+        $rows = $this->adminRepository->admins($params);
 
-        return $result;
+        $total = Admin::count();
+
+        return $this->getPagingRows($rows, $total, $request->input('page',1), $request->input('page_size',10));
     }
 }
