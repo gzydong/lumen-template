@@ -47,11 +47,13 @@ $router->group(['middleware' => []], function () use ($router) {
     $router->post('rbac/create-role', ['middleware' => [], 'uses' => 'RbacController@createRole']);
     $router->post('rbac/edit-role', ['middleware' => [], 'uses' => 'RbacController@editRole']);
     $router->post('rbac/delete-role', ['middleware' => [], 'uses' => 'RbacController@deleteRole']);
+    $router->get('rbac/roles', ['middleware' => [], 'uses' => 'RbacController@roles']);
 
     // 权限相关接口
     $router->post('rbac/create-permission', ['middleware' => [], 'uses' => 'RbacController@createPermission']);
     $router->post('rbac/edit-permission', ['middleware' => [], 'uses' => 'RbacController@editPermission']);
     $router->post('rbac/delete-permission', ['middleware' => [], 'uses' => 'RbacController@deletePermission']);
+    $router->get('rbac/permissions', ['middleware' => [], 'uses' => 'RbacController@permissions']);
 
     // 分配角色权限
     $router->post('rbac/give-role-permission', ['middleware' => [], 'uses' => 'RbacController@giveRolePermission']);

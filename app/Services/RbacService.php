@@ -144,4 +144,37 @@ class RbacService
 
         return true;
     }
+
+    /**
+     * 获取角色列表
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function roles(Request $request)
+    {
+        $params = [];
+
+        return $this->roleRepository->findAllRoles(
+            $request->input('page'),
+            $request->input('page_size'),
+            $params
+        );
+    }
+
+    /**
+     * 获取权限列表
+     * @param Request $request
+     * @return array
+     */
+    public function permissions(Request $request)
+    {
+        $params = [];
+
+        return $this->permissionRepository->permissions(
+            $request->input('page'),
+            $request->input('page_size'),
+            $params
+        );
+    }
 }

@@ -3,10 +3,13 @@
 namespace App\Repositorys;
 
 use App\Models\Rbac\Role;
+use App\Traits\PagingTrait;
 use Exception;
 
 class RoleRepository
 {
+    use PagingTrait;
+
     /**
      * 创建角色
      *
@@ -63,5 +66,24 @@ class RoleRepository
     public function findById(int $role_id, $filed = ['*'])
     {
         return Role::where('id', $role_id)->first($filed);
+    }
+
+    /**
+     * 查询角色列表
+     *
+     * @param int $page 分页数
+     * @param int $page_size 分页大小
+     * @param array $params 查询参数
+     * @return array
+     */
+    public function findAllRoles(int $page, int $page_size, array $params = [])
+    {
+        $rowObj = Role::select(['id', 'name', 'display_name', 'description', 'created_at', 'updated_at']);
+
+        $total = $rowObj->count();
+
+        $rows = $rowObj->forPage($page, $page_size)->get()->toArray();
+
+        return $this->getPagingRows($rows, $total, $page, $page_size);
     }
 }

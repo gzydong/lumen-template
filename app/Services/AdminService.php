@@ -7,6 +7,7 @@ use App\Repositorys\AdminRepository;
 use App\Traits\PagingTrait;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 
 class AdminService
 {
@@ -25,14 +26,28 @@ class AdminService
     /**
      * 登录业务处理
      *
-     * @param array $params 参数信息
+     * @param array $params
+     * @return bool|Admin
      */
     public function login(array $params)
     {
-        Admin::where('username', $params['username'])->update([
-            'last_login_time' => date('Y-m-d H:i:s'),
-            'last_login_ip' => request()->getClientIp(),
-        ]);
+        // 通过登录名查询用户信息
+        $admin = $this->adminRepository->findByUserName($params['username']);
+        if (!$admin) {
+            return false;
+        }
+
+        // 登录密码验证
+        if (!check_password($params['password'], $admin->password)) {
+            return false;
+        }
+
+        // 判断用户状态
+        if ($admin->status !== Admin::STATUS_ENABLES) {
+            return false;
+        }
+
+        return $admin;
     }
 
     /**
@@ -83,6 +98,8 @@ class AdminService
 
         $total = Admin::count();
 
-        return $this->getPagingRows($rows, $total, $request->input('page',1), $request->input('page_size',10));
+        return $this->getPagingRows($rows, $total, $request->input('page', 1), $request->input('page_size', 10));
     }
+
+
 }

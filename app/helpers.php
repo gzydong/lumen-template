@@ -29,3 +29,14 @@ function decrypt_password($password, $private_key)
     openssl_private_decrypt(base64_decode($password), $decrypt_password, $private_key);
     return $decrypt_password;
 }
+
+/**
+ * 验证密码是否输入错误
+ *
+ * @param $password
+ * @param $hash
+ * @return mixed
+ */
+function check_password($password,$hash){
+    return app('hash')->check($password,$hash);
+}

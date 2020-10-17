@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Admin;
 use App\Exceptions\ResponseCode;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +18,7 @@ class AuthController extends CController
     {
         // 授权中间件
         $this->middleware("auth:{$this->guard}", [
-            'except' => ['login']
+            'except' => ['login', 'logout']
         ]);
     }
 
@@ -38,21 +37,26 @@ class AuthController extends CController
             'password' => 'required'
         ]);
 
-        $credentials = $request->only(['username', 'password']);
-        $credentials['status'] = Admin::STATUS_ENABLES;// 过滤账号状态
+        // 处理其它登录业务逻辑
+        $admin = services()->adminService->login($request->only(['username', 'password']));
 
-        // 获取登录 Token
-        $token = auth($this->guard)->attempt($credentials);
-        if (!$token) {
+        // 通过用户信息换取用户token
+        if (!$admin || !$token = auth($this->guard)->login($admin)) {
             return $this->fail(ResponseCode::AUTH_LOGON_FAIL, '账号不存在或密码填写错误...');
         }
 
-        // 处理其它登录业务逻辑
-        services()->adminService->login($credentials);
+        // 更新登录信息
+        $admin->last_login_time = date('Y-m-d H:i:s');
+        $admin->last_login_ip = $request->getClientIp();
+        $admin->save();
 
         return $this->success([
-            'Authentication' => $this->formatToken($token),
-            'admin_info' => '',
+            'auth' => $this->formatToken($token),
+            'admin_info' => [
+                'username' => $admin->username,
+                'email' => $admin->email,
+                'avatar' => $admin->avatar,
+            ]
         ]);
     }
 
@@ -63,7 +67,10 @@ class AuthController extends CController
      */
     public function logout()
     {
-        auth($this->guard)->logout();
+        if ($this->isLogin()) {
+            auth($this->guard)->logout();
+        }
+
         return $this->success([], 'Successfully logged out');
     }
 

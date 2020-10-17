@@ -213,4 +213,36 @@ class RbacController extends CController
 
         return $this->success([], '管理员权限分配成功...');
     }
+
+    /**
+     * 获取角色列表
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function roles(Request $request)
+    {
+        $this->validate($request, [
+            'page' => 'required|integer:min:1',
+            'page_size' => 'required|in:10,20,30,50,100',
+        ]);
+
+        $result = services()->rbacService->roles($request);
+        return $this->success($result);
+    }
+
+    /**
+     * 获取权限列表
+     */
+    public function permissions(Request $request)
+    {
+        $this->validate($request, [
+            'page' => 'required|integer:min:1',
+            'page_size' => 'required|in:10,20,30,50,100',
+        ]);
+
+        $result = services()->rbacService->permissions($request);
+        return $this->success($result);
+    }
 }
