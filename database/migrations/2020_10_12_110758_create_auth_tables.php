@@ -32,7 +32,8 @@ class CreateAuthTables extends Migration
             $table->string('name')->unique()->comment('角色名');
             $table->string('display_name')->nullable()->comment('角色显示名称');
             $table->string('description')->nullable()->comment('角色描述');
-            $table->timestamps();
+            $table->dateTime('created_at')->comment('创建时间');
+            $table->dateTime('updated_at')->comment('修改时间');
 
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';

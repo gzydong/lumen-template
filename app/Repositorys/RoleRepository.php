@@ -23,6 +23,8 @@ class RoleRepository
             $result->name = $data['name'];
             $result->display_name = $data['display_name'];
             $result->description = $data['description'];
+            $result->created_at = date('Y-m-d H:i:s');
+            $result->updated_at = date('Y-m-d H:i:s');
             return $result->save();
         } catch (Exception $e) {
             return false;
@@ -80,10 +82,13 @@ class RoleRepository
     {
         $rowObj = Role::select(['id', 'name', 'display_name', 'description', 'created_at', 'updated_at']);
 
+        if(isset($params['display_name']) && !empty($params['display_name'])){
+            $rowObj->where('display_name','like',"%{$params['display_name']}%");
+        }
+
         $total = $rowObj->count();
 
-        $rows = $rowObj->forPage($page, $page_size)->get()->toArray();
-
+        $rows = $rowObj->orderBy('id','desc')->forPage($page, $page_size)->get()->toArray();
         return $this->getPagingRows($rows, $total, $page, $page_size);
     }
 }

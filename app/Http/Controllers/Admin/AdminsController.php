@@ -53,15 +53,21 @@ class AdminsController extends CController
     public function updatePassword(Request $request)
     {
         $this->validate($request, [
+            'id' => 'required|integer:min:1',
             'password' => 'required',
             'password2' => 'required|same:password',
         ]);
 
-        $admin = $this->user();
-        $admin->password = $request->input('password');
-        $admin->save();
+        $result = services()->adminService->updatePassword(
+            $request->input('id'),
+            $request->input('password')
+        );
 
-        return $this->success([], '当前登录账号密码已修改...');
+        if (!$result) {
+            return $this->fail(ResponseCode::FAIL, '管理员密码修改失败...');
+        }
+
+        return $this->success([], '管理员密码已修改...');
     }
 
     /**
@@ -105,6 +111,7 @@ class AdminsController extends CController
         $this->validate($request, [
             'page' => 'required|integer:min:1',
             'page_size' => 'required|in:10,20,30,50,100',
+            'status'=>'in:0,1,2',
         ]);
 
         $result = services()->adminService->getAdmins($request);

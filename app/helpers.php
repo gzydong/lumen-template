@@ -19,7 +19,7 @@ function services()
 /**
  * 解密密码
  *
- * @param string $password    密码
+ * @param string $password 密码
  * @param string $private_key 私钥
  *
  * @return string
@@ -37,6 +37,17 @@ function decrypt_password($password, $private_key)
  * @param $hash
  * @return mixed
  */
-function check_password($password,$hash){
-    return app('hash')->check($password,$hash);
+function check_password($password, $hash)
+{
+    return app('hash')->check($password, $hash);
+}
+
+function get_orderby_sort($sort)
+{
+    $arr = [
+        'ascend' => 'asc',
+        'descend' => 'desc'
+    ];
+
+    return isset($arr[$sort]) ? $arr[$sort] : null;
 }

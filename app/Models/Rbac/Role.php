@@ -24,8 +24,6 @@ class Role extends BaseModel
      */
     protected $table = 'roles';
 
-    public $timestamps = true;
-
     /**
      * 获得此角色下的用户
      *

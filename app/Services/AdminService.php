@@ -7,7 +7,6 @@ use App\Repositorys\AdminRepository;
 use App\Traits\PagingTrait;
 use Illuminate\Http\Request;
 use Exception;
-use Illuminate\Support\Facades\Hash;
 
 class AdminService
 {
@@ -85,6 +84,19 @@ class AdminService
     }
 
     /**
+     * 修改指定管理员密码
+     *
+     * @param int $admin_id 管理员ID
+     * @param string $password 新密码
+     * @return bool
+     */
+    public function updatePassword(int $admin_id, string $password)
+    {
+        $password = app('hash')->make($password);
+        return (bool)Admin::where('id', $admin_id)->update(['password' => $password, 'updated_at' => date('Y-m-d H:i:s')]);
+    }
+
+    /**
      * 获取管理员列表
      *
      * @param Request $request
@@ -94,12 +106,31 @@ class AdminService
     {
         $params = [];
 
-        $rows = $this->adminRepository->admins($params);
+        $orderBy = $request->only(['sortField', 'sortOrder']);
+        if (isset($orderBy['sortField'], $orderBy['sortOrder'])) {
+            $params['order_by'] = $orderBy['sortField'];
+            $params['sort'] = get_orderby_sort($orderBy['sortOrder']);
+        }
 
-        $total = Admin::count();
+        if($username = $request->input('username','')){
+            $params['username'] = addslashes($username);
+        }
 
-        return $this->getPagingRows($rows, $total, $request->input('page', 1), $request->input('page_size', 10));
+        if($status = $request->input('status','')){
+            if(in_array($status,[1,2])){
+                $arr = [
+                    '1' => Admin::STATUS_ENABLES,
+                    '2' => Admin::STATUS_DISABLES,
+                ];
+
+                $params['status'] = $arr[$status];
+            }
+        }
+
+        return $this->adminRepository->findAllAdmins(
+            $request->input('page', 1),
+            $request->input('page_size', 10),
+            $params
+        );
     }
-
-
 }

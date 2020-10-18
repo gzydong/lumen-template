@@ -155,6 +155,16 @@ class RbacService
     {
         $params = [];
 
+        $orderBy = $request->only(['sortField', 'sortOrder']);
+        if (isset($orderBy['sortField'], $orderBy['sortOrder'])) {
+            $params['order_by'] = $orderBy['sortField'];
+            $params['sort'] = get_orderby_sort($orderBy['sortOrder']);
+        }
+
+        if($username = $request->input('rolename','')){
+            $params['display_name'] = addslashes($username);
+        }
+
         return $this->roleRepository->findAllRoles(
             $request->input('page'),
             $request->input('page_size'),
