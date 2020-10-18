@@ -91,4 +91,5 @@ class RoleRepository
         $rows = $rowObj->orderBy('id','desc')->forPage($page, $page_size)->get()->toArray();
         return $this->getPagingRows($rows, $total, $page, $page_size);
     }
+
 }

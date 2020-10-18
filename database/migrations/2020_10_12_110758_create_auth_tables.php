@@ -55,6 +55,7 @@ class CreateAuthTables extends Migration
 
         Schema::create($permissionsTable, function (Blueprint $table) {
             $table->increments('id')->comment('权限ID');
+            $table->unsignedInteger('pid')->default(0)->comment('父级权限ID');
             $table->string('route')->unique()->comment('权限路由');
             $table->string('display_name')->nullable()->comment('权限显示名称');
             $table->string('description')->nullable()->comment('权限描述');

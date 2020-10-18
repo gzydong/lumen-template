@@ -35,4 +35,5 @@ $router->group([], function () use ($router) {
 $router->group([], function () use ($router) {
     // 案例接口
     $router->get('example/example4', ['middleware' => [], 'uses' => 'ExampleController@example4']);
+    $router->get('example/test', ['middleware' => [], 'uses' => 'ExampleController@test']);
 });

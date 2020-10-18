@@ -6,6 +6,7 @@ use App\Exceptions\ResponseCode;
 use App\Http\Validators\ExampleValidate;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * 使用案例
@@ -65,5 +66,21 @@ class ExampleController extends CController
         if (!$exampleValidate->scene('delete3')->check($request->all())) {
             return $this->fail(ResponseCode::VALIDATION, $exampleValidate->getError());
         }
+    }
+
+    public function test()
+    {
+        $arr = [];
+        $result = DB::table('perms')->get()->toArray();
+        foreach ($result as $value) {
+            $arr[] = [
+                'id' => $value->id,
+                'pid' => $value->pid,
+                'key' => $value->id,
+                'title' => $value->description,
+            ];
+        }
+
+        return json_encode($arr,JSON_UNESCAPED_UNICODE);
     }
 }
