@@ -8,9 +8,10 @@ use App\Models\BaseModel;
  * App\Models\Rbac\Permission
  *
  * @property int $id
- * @property string $route 权限名
- * @property string|null $display_name 权限显示名称
- * @property string|null $description 权限描述
+ * @property string $parent_id 父节点权限ID
+ * @property string $type 权限类型[0:目录;1:菜单;2:权限]
+ * @property string $route 权限路由
+ * @property string $rule_name 权限名称
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -22,8 +23,6 @@ class Permission extends BaseModel
      * @var string 定义表名字
      */
     protected $table = 'permissions';
-
-    public $timestamps = true;
 
     /**
      * Many-to-Many relations with role model.

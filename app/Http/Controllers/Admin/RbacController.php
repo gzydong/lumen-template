@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\ResponseCode;
+use App\Repositorys\PermissionRepository;
+use App\Repositorys\RoleRepository;
+use App\Traits\PagingTrait;
 use Illuminate\Http\Request;
 
 /**
@@ -12,17 +15,8 @@ use Illuminate\Http\Request;
  */
 class RbacController extends CController
 {
-    /**
-     * 控制器初始化...
-     */
-    public function __construct()
-    {
-        // 登录验证
-        $this->middleware("auth:{$this->guard}");
 
-        // 权限验证中间件
-        $this->middleware("admin_permissions");
-    }
+    use PagingTrait;
 
     /**
      * 添加角色信息
@@ -100,9 +94,10 @@ class RbacController extends CController
     public function createPermission(Request $request)
     {
         $this->validate($request, [
+            'type' => 'required|in:0,1,2',
+            'parent_id' => 'required|integer|min:0',
+            'rule_name' => 'required',
             'route' => 'required',
-            'display_name' => 'required',
-            'description' => 'required',
         ]);
 
         $result = services()->rbacService->createPermission($request);
@@ -234,15 +229,45 @@ class RbacController extends CController
 
     /**
      * 获取权限列表
+     *
+     * @param PermissionRepository $permissionRepository
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function permissions(Request $request)
+    public function permissions(PermissionRepository $permissionRepository)
     {
-        $this->validate($request, [
-            'page' => 'required|integer:min:1',
-            'page_size' => 'required|in:10,20,30,50,100',
+        $rows = $permissionRepository->findAllPerms(['id', 'parent_id', 'type', 'route', 'rule_name']);
+        $result = $this->getPagingRows($rows, count($rows), 1, 10000);
+
+        return $this->success($result);
+    }
+
+    /**
+     * 获取角色权限列表
+     *
+     * @param PermissionRepository $permissionRepository
+     * @param RoleRepository $roleRepository
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function getRolePerms(PermissionRepository $permissionRepository, RoleRepository $roleRepository)
+    {
+        $this->validate(request(), [
+            'role_id' => 'required|integer:min:1'
         ]);
 
-        $result = services()->rbacService->permissions($request);
-        return $this->success($result);
+        $perms = $permissionRepository->findAllPerms(['id', 'parent_id', 'rule_name']);
+        $perms = array_map(function ($value) {
+            return [
+                'id' => $value['id'],
+                'pid' => $value['parent_id'],
+                'key' => $value['id'],
+                'title' => $value['rule_name'],
+            ];
+        }, $perms);
+
+        return $this->success([
+            'permissions' => $perms,
+            'role_perms' => $roleRepository->findRolePerms(request()->input('role_id'))
+        ]);
     }
 }

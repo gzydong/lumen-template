@@ -3,6 +3,7 @@
 namespace App\Repositorys;
 
 use App\Models\Rbac\Role;
+use App\Models\Rbac\RolePermission;
 use App\Traits\PagingTrait;
 use Exception;
 
@@ -82,14 +83,24 @@ class RoleRepository
     {
         $rowObj = Role::select(['id', 'name', 'display_name', 'description', 'created_at', 'updated_at']);
 
-        if(isset($params['display_name']) && !empty($params['display_name'])){
-            $rowObj->where('display_name','like',"%{$params['display_name']}%");
+        if (isset($params['display_name']) && !empty($params['display_name'])) {
+            $rowObj->where('display_name', 'like', "%{$params['display_name']}%");
         }
 
         $total = $rowObj->count();
 
-        $rows = $rowObj->orderBy('id','desc')->forPage($page, $page_size)->get()->toArray();
+        $rows = $rowObj->orderBy('id', 'desc')->forPage($page, $page_size)->get()->toArray();
         return $this->getPagingRows($rows, $total, $page, $page_size);
     }
 
+    /**
+     * 获取角色权限列表
+     *
+     * @param int $role_id 角色ID
+     * @return mixed
+     */
+    public function findRolePerms(int $role_id)
+    {
+        return RolePermission::where('role_id', $role_id)->pluck('permission_id')->toArray();
+    }
 }

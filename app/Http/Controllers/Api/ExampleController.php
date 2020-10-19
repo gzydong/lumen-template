@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ResponseCode;
 use App\Http\Validators\ExampleValidate;
+use App\Repositorys\PermissionRepository;
+use App\Repositorys\RoleRepository;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -68,19 +70,9 @@ class ExampleController extends CController
         }
     }
 
-    public function test()
-    {
-        $arr = [];
-        $result = DB::table('perms')->get()->toArray();
-        foreach ($result as $value) {
-            $arr[] = [
-                'id' => $value->id,
-                'pid' => $value->pid,
-                'key' => $value->id,
-                'title' => $value->description,
-            ];
-        }
+    public function test(PermissionRepository $permissionRepository){
+        $result = $permissionRepository->findAllPerms(['id','pid','display_name']);
 
-        return json_encode($arr,JSON_UNESCAPED_UNICODE);
+        dd($result);
     }
 }

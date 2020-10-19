@@ -56,10 +56,12 @@ class CreateAuthTables extends Migration
         Schema::create($permissionsTable, function (Blueprint $table) {
             $table->increments('id')->comment('权限ID');
             $table->unsignedInteger('pid')->default(0)->comment('父级权限ID');
+            $table->tinyInteger('type')->default(0)->comment('权限类型[0:目录;1:菜单;2:权限;]');
             $table->string('route')->unique()->comment('权限路由');
             $table->string('display_name')->nullable()->comment('权限显示名称');
             $table->string('description')->nullable()->comment('权限描述');
-            $table->timestamps();
+            $table->dateTime('created_at')->comment('创建时间');
+            $table->dateTime('updated_at')->comment('修改时间');
 
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';

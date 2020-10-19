@@ -10,6 +10,8 @@
 |
 */
 
+$authMiddleware = "auth:admin";
+
 /**
  * AuthController 控制器分组
  */
@@ -42,7 +44,7 @@ $router->group([], function () use ($router) {
 /**
  * RbacController 控制器分组
  */
-$router->group(['middleware' => []], function () use ($router) {
+$router->group(['middleware' => [$authMiddleware, 'admin_permissions']], function () use ($router) {
     // 角色相关接口
     $router->post('rbac/create-role', ['middleware' => [], 'uses' => 'RbacController@createRole']);
     $router->post('rbac/edit-role', ['middleware' => [], 'uses' => 'RbacController@editRole']);
@@ -58,4 +60,5 @@ $router->group(['middleware' => []], function () use ($router) {
     // 分配角色权限
     $router->post('rbac/give-role-permission', ['middleware' => [], 'uses' => 'RbacController@giveRolePermission']);
     $router->post('rbac/give-admin-permission', ['middleware' => [], 'uses' => 'RbacController@giveAdminPermission']);
+    $router->get('rbac/get-role-permission', ['middleware' => [], 'uses' => 'RbacController@getRolePerms']);
 });

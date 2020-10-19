@@ -93,7 +93,7 @@ class RbacService
      */
     public function createPermission(Request $request)
     {
-        $data = $request->only(['route', 'display_name', 'description']);
+        $data = $request->only(['type', 'parent_id', 'rule_name','route']);
         return $this->permissionRepository->create($data);
     }
 
@@ -105,7 +105,7 @@ class RbacService
      */
     public function editPermission(Request $request)
     {
-        $data = $request->only(['route', 'display_name', 'description']);
+        $data = $request->only(['type', 'parent_id', 'rule_name','route']);
         return $this->permissionRepository->edit($request->input('id'), $data);
     }
 
@@ -174,17 +174,11 @@ class RbacService
 
     /**
      * 获取权限列表
-     * @param Request $request
+     *
      * @return array
      */
-    public function permissions(Request $request)
+    public function permissions()
     {
-        $params = [];
-
-        return $this->permissionRepository->permissions(
-            $request->input('page'),
-            $request->input('page_size'),
-            $params
-        );
+        return $this->permissionRepository->findAllPerms(['id', 'parent_id', 'route','rule_name']);
     }
 }

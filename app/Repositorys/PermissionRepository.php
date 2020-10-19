@@ -17,9 +17,12 @@ class PermissionRepository
     {
         try {
             $result = new Permission();
+            $result->parent_id = $data['parent_id'];
+            $result->type = $data['type'];
             $result->route = $data['route'];
-            $result->display_name = $data['display_name'];
-            $result->description = $data['description'];
+            $result->rule_name = $data['rule_name'];
+            $result->created_at = date('Y-m-d H:i:s');
+            $result->updated_at = date('Y-m-d H:i:s');
             return $result->save();
         } catch (Exception $e) {
             return false;
@@ -54,19 +57,13 @@ class PermissionRepository
     }
 
     /**
-     * 查询权限列表
+     * 获取权限列表
      *
-     * @param int $page 分页数
-     * @param int $page_size 分页大小
-     * @param array $params 查询参数
+     * @param array $field 查询字段
      * @return array
      */
-    public function permissions(int $page, int $page_size, array $params = [])
+    public function findAllPerms($field = ['*'])
     {
-        $rowObj = Permission::select(['id', 'route', 'display_name', 'description', 'created_at', 'updated_at']);
-
-        $total = $rowObj->count();
-        $rows = $rowObj->forPage($page, $page_size)->get()->toArray();
-        return $this->getPagingRows($rows, $total, $page, $page_size);
+        return Permission::get($field)->toArray();
     }
 }
