@@ -29,7 +29,7 @@ Trait ResponseTrait
      *
      * @return JsonResponse
      */
-    public function success($data = [], $message = 'OK')
+    public function success($data = [], $message = 'success')
     {
         $code = ResponseCode::SUCCESS;
         return response()->json(compact('code', 'message', 'data'), 200);
