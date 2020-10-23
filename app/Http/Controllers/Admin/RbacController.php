@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exceptions\ResponseCode;
-use App\Repositorys\PermissionRepository;
-use App\Repositorys\RoleRepository;
+use App\Models\Rbac\AdminPermission;
+use App\Models\Rbac\Role;
+use App\Models\Rbac\RoleAdmin;
 use App\Traits\PagingTrait;
 use Illuminate\Http\Request;
 
@@ -15,8 +15,15 @@ use Illuminate\Http\Request;
  */
 class RbacController extends CController
 {
-
     use PagingTrait;
+
+    public function __construct()
+    {
+        $this->middleware('rbac', ['except' => [
+            'getRolePerms',
+            'getAdminPerms'
+        ]]);
+    }
 
     /**
      * 添加角色信息
@@ -35,7 +42,7 @@ class RbacController extends CController
 
         $result = services()->rbacService->createRole($request);
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '角色添加失败...');
+            return $this->fail('角色添加失败...');
         }
 
         return $this->success([], '角色添加成功...');
@@ -59,7 +66,7 @@ class RbacController extends CController
 
         $result = services()->rbacService->editRole($request);
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '角色信息修改失败...');
+            return $this->fail('角色信息修改失败...');
         }
 
         return $this->success([], '角色信息修改成功...');
@@ -78,7 +85,7 @@ class RbacController extends CController
 
         $result = services()->rbacService->deleteRole($request->input('role_id'));
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '角色信息删除失败...');
+            return $this->fail('角色信息删除失败...');
         }
 
         return $this->success([], '角色信息删除成功...');
@@ -102,7 +109,7 @@ class RbacController extends CController
 
         $result = services()->rbacService->createPermission($request);
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '权限添加失败...');
+            return $this->fail('权限添加失败...');
         }
 
         return $this->success([], '权限添加成功...');
@@ -119,14 +126,15 @@ class RbacController extends CController
     {
         $this->validate($request, [
             'id' => 'required|integer|min:1',
+            'type' => 'required|in:0,1,2',
+            'parent_id' => 'required|integer|min:0',
+            'rule_name' => 'required',
             'route' => 'required',
-            'display_name' => 'required',
-            'description' => 'required',
         ]);
 
         $result = services()->rbacService->editPermission($request);
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '权限修改失败...');
+            return $this->fail('权限修改失败...');
         }
 
         return $this->success([], '权限修改成功...');
@@ -145,7 +153,7 @@ class RbacController extends CController
 
         $result = services()->rbacService->deletePermission($request->input('id'));
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '权限删除失败...');
+            return $this->fail('权限删除失败...');
         }
 
         return $this->success([], '权限删除成功...');
@@ -171,7 +179,7 @@ class RbacController extends CController
 
         $result = services()->rbacService->giveRolePermission($request->input('role_id'), $permissions);
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '角色权限分配失败...');
+            return $this->fail('角色权限分配失败...');
         }
 
         return $this->success([], '角色权限分配成功...');
@@ -203,7 +211,7 @@ class RbacController extends CController
         );
 
         if (!$result) {
-            return $this->fail(ResponseCode::FAIL, '管理员权限分配失败...');
+            return $this->fail('管理员权限分配失败...');
         }
 
         return $this->success([], '管理员权限分配成功...');
@@ -230,32 +238,30 @@ class RbacController extends CController
     /**
      * 获取权限列表
      *
-     * @param PermissionRepository $permissionRepository
      * @return \Illuminate\Http\JsonResponse
      */
-    public function permissions(PermissionRepository $permissionRepository)
+    public function permissions()
     {
-        $rows = $permissionRepository->findAllPerms(['id', 'parent_id', 'type', 'route', 'rule_name']);
-        $result = $this->getPagingRows($rows, count($rows), 1, 10000);
+        $rows = services()->rbacService->getRepository()->findAllPerms(['id', 'parent_id', 'type', 'route', 'rule_name']);
 
+        $result = $this->getPagingRows($rows, count($rows), 1, 10000);
         return $this->success($result);
     }
 
     /**
      * 获取角色权限列表
      *
-     * @param PermissionRepository $permissionRepository
-     * @param RoleRepository $roleRepository
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function getRolePerms(PermissionRepository $permissionRepository, RoleRepository $roleRepository)
+    public function getRolePerms()
     {
         $this->validate(request(), [
             'role_id' => 'required|integer:min:1'
         ]);
 
-        $perms = $permissionRepository->findAllPerms(['id', 'parent_id', 'rule_name']);
+        $rbacRepository = services()->rbacService->getRepository();
+
         $perms = array_map(function ($value) {
             return [
                 'id' => $value['id'],
@@ -263,11 +269,43 @@ class RbacController extends CController
                 'key' => $value['id'],
                 'title' => $value['rule_name'],
             ];
-        }, $perms);
+        }, $rbacRepository->findAllPerms(['id', 'parent_id', 'rule_name']));
 
         return $this->success([
             'permissions' => $perms,
-            'role_perms' => $roleRepository->findRolePerms(request()->input('role_id'))
+            'role_perms' => $rbacRepository->findRolePermsIds(request()->input('role_id'))
         ]);
+    }
+
+    /**
+     * 获取管理员相关权限
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function getAdminPerms()
+    {
+        $this->validate(request(), [
+            'admin_id' => 'required|integer:min:1'
+        ]);
+
+        $admin_id = request()->input('admin_id');
+        $rbacRepository = services()->rbacService->getRepository();
+
+        $perms = array_map(function ($value) {
+            return [
+                'id' => $value['id'],
+                'pid' => $value['parent_id'],
+                'key' => $value['id'],
+                'title' => $value['rule_name'],
+            ];
+        }, $rbacRepository->findAllPerms(['id', 'parent_id', 'rule_name']));
+
+        $role_id = RoleAdmin::where('admin_id', $admin_id)->value('role_id');
+        return $this->success([
+            'roles' => Role::get(['id', 'display_name'])->toarray(),
+            'perms' => $perms,
+            'admin_perms' => AdminPermission::where('admin_id', $admin_id)->pluck('permission_id')->toArray(),
+            'role_id' => $role_id ?? 0
+        ], 'success');
     }
 }

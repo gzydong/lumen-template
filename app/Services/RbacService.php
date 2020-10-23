@@ -4,8 +4,7 @@ namespace App\Services;
 
 use App\Models\Admin;
 use App\Models\Rbac\RoleAdmin;
-use App\Repositorys\RoleRepository;
-use App\Repositorys\PermissionRepository;
+use App\Repositorys\RbacRepository;
 use Illuminate\Http\Request;
 
 /**
@@ -17,24 +16,17 @@ use Illuminate\Http\Request;
 class RbacService
 {
     /**
-     * @var RoleRepository
+     * @var RbacRepository
      */
-    protected $roleRepository;
+    protected $rbacRepository;
 
-    /**
-     * @var PermissionRepository
-     */
-    protected $permissionRepository;
-
-    /**
-     * RbacService constructor.
-     * @param RoleRepository $roleRepository
-     * @param PermissionRepository $permissionRepository
-     */
-    public function __construct(RoleRepository $roleRepository, PermissionRepository $permissionRepository)
+    public function __construct(RbacRepository $rbacRepository)
     {
-        $this->roleRepository = $roleRepository;
-        $this->permissionRepository = $permissionRepository;
+        $this->rbacRepository = $rbacRepository;
+    }
+
+    public function getRepository(){
+        return $this->rbacRepository;
     }
 
     /**
@@ -46,7 +38,8 @@ class RbacService
     public function createRole(Request $request)
     {
         $data = $request->only(['name', 'display_name', 'description']);
-        return $this->roleRepository->create($data);
+
+        return $this->rbacRepository->insertRole($data);
     }
 
     /**
@@ -58,7 +51,7 @@ class RbacService
     public function editRole(Request $request)
     {
         $data = $request->only(['name', 'display_name', 'description']);
-        return $this->roleRepository->edit($request->input('role_id'), $data);
+        return $this->rbacRepository->updateRole($request->input('role_id'), $data);
     }
 
     /**
@@ -69,7 +62,7 @@ class RbacService
      */
     public function deleteRole(int $role_id)
     {
-        return $this->roleRepository->delete($role_id);
+        return $this->rbacRepository->deleteRole($role_id);
     }
 
     /**
@@ -77,11 +70,11 @@ class RbacService
      *
      * @param int $role_id 角色ID
      * @param array $permissions 权限列表
-     * @return false
+     * @return mixed
      */
     public function giveRolePermission(int $role_id, array $permissions)
     {
-        $role = $this->roleRepository->findById($role_id);
+        $role = $this->rbacRepository->findByRoleId($role_id);
         return $role ? $role->syncPerm($permissions) : false;
     }
 
@@ -93,8 +86,8 @@ class RbacService
      */
     public function createPermission(Request $request)
     {
-        $data = $request->only(['type', 'parent_id', 'rule_name','route']);
-        return $this->permissionRepository->create($data);
+        $data = $request->only(['type', 'parent_id', 'rule_name', 'route']);
+        return $this->rbacRepository->insertPerms($data);
     }
 
     /**
@@ -105,8 +98,8 @@ class RbacService
      */
     public function editPermission(Request $request)
     {
-        $data = $request->only(['type', 'parent_id', 'rule_name','route']);
-        return $this->permissionRepository->edit($request->input('id'), $data);
+        $data = $request->only(['type', 'parent_id', 'rule_name', 'route']);
+        return $this->rbacRepository->updatePerms($request->input('id'), $data);
     }
 
     /**
@@ -117,7 +110,7 @@ class RbacService
      */
     public function deletePermission(int $permission_id)
     {
-        return $this->permissionRepository->delete($permission_id);
+        return $this->rbacRepository->deletePerms($permission_id);
     }
 
     /**
@@ -161,11 +154,11 @@ class RbacService
             $params['sort'] = get_orderby_sort($orderBy['sortOrder']);
         }
 
-        if($username = $request->input('rolename','')){
+        if ($username = $request->input('rolename', '')) {
             $params['display_name'] = addslashes($username);
         }
 
-        return $this->roleRepository->findAllRoles(
+        return $this->rbacRepository->findAllRoles(
             $request->input('page'),
             $request->input('page_size'),
             $params
@@ -179,6 +172,6 @@ class RbacService
      */
     public function permissions()
     {
-        return $this->permissionRepository->findAllPerms(['id', 'parent_id', 'route','rule_name']);
+        return $this->rbacRepository->findAllPerms(['id', 'parent_id', 'route', 'rule_name']);
     }
 }

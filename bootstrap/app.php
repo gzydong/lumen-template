@@ -78,14 +78,15 @@ $app->configure('system');
 // 全局中间件
 $app->middleware([
     App\Http\Middleware\CorsMiddleware::class,
-    // App\Http\Middleware\ExampleMiddleware::class,
 ]);
 
 // 注册路由中间件
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'throttle' => App\Http\Middleware\ThrottleMiddleware::class,
-    'admin_permissions' => App\Http\Middleware\RbacMiddleware::class,
+
+    // 后台接口权限控制中间件
+    'rbac' => App\Http\Middleware\RbacMiddleware::class,
 ]);
 
 /*
@@ -116,7 +117,7 @@ $app->register(Illuminate\Redis\RedisServiceProvider::class);
 | Register Alias
 |--------------------------------------------------------------------------
 */
-//新增，解决Lumen的Cache问题
+//新增，解决 Lumen 的 Cache 问题
 $app->alias('cache', 'Illuminate\Cache\CacheManager');
 
 /*
@@ -148,7 +149,9 @@ $app->router->group([
 $app->router->group([
     'prefix' => 'admin',
     'namespace' => 'App\Http\Controllers\Admin',
-    'middleware' => []
+    'middleware' => [
+        'auth:admin'
+    ]
 ], function ($router) {
     require __DIR__ . '/../routes/admin.php';
 });

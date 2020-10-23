@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ResponseCode;
 use App\Http\Validators\ExampleValidate;
-use App\Repositorys\PermissionRepository;
-use App\Repositorys\RoleRepository;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * 使用案例
@@ -66,13 +63,12 @@ class ExampleController extends CController
     {
         // 验证请求数据
         if (!$exampleValidate->scene('delete3')->check($request->all())) {
-            return $this->fail(ResponseCode::VALIDATION, $exampleValidate->getError());
+            return $this->fail($exampleValidate->getError(),[], ResponseCode::VALIDATION);
         }
     }
 
-    public function test(PermissionRepository $permissionRepository){
-        $result = $permissionRepository->findAllPerms(['id','pid','display_name']);
+    public function test()
+    {
 
-        dd($result);
     }
 }

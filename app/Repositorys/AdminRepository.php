@@ -12,7 +12,6 @@ use App\Traits\PagingTrait;
  */
 class AdminRepository
 {
-
     use PagingTrait;
 
     /**
@@ -45,13 +44,15 @@ class AdminRepository
             $sort = $params['sort'];
         }
 
-        if(isset($params['username']) && !empty($params['username'])){
-            $rowObj->where('username','like',"%{$params['username']}%");
+        if (isset($params['username']) && !empty($params['username'])) {
+            $rowObj->where('username', 'like', "%{$params['username']}%");
         }
 
-        if(isset($params['status'])){
-            $rowObj->where('status','=',$params['status']);
+        if (isset($params['status'])) {
+            $rowObj->where('status', $params['status']);
         }
+
+        $rowObj->where('is_delete', Admin::NO_DELETE);
 
         $total = $rowObj->count();
         $rows = $rowObj->orderBy($orderBy, $sort)->forPage($page, $page_size)->get()->toArray();

@@ -10,13 +10,13 @@ Trait ResponseTrait
     /**
      * 处理失败信息返回
      *
-     * @param int $code 错误码
      * @param string $message 响应提示
      * @param array $data 响应数据
+     * @param int $code 错误码
      *
      * @return JsonResponse
      */
-    public function fail($code = ResponseCode::FAIL, $message = 'FAIL', $data = [])
+    public function fail($message = 'FAIL', $data = [],$code = ResponseCode::FAIL)
     {
         return response()->json(compact('code', 'message', 'data'), 200);
     }
@@ -29,7 +29,7 @@ Trait ResponseTrait
      *
      * @return JsonResponse
      */
-    public function success($data = [], $message = 'success')
+    public function success($data = [], $message = 'OK')
     {
         $code = ResponseCode::SUCCESS;
         return response()->json(compact('code', 'message', 'data'), 200);

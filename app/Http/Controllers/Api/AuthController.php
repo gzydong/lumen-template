@@ -49,7 +49,7 @@ class AuthController extends CController
         // 登录
         $token = auth($this->guard)->claims($claims)->attempt($request->only(['mobile', 'password']));
         if (!$token) {
-            return $this->fail(ResponseCode::AUTH_LOGON_FAIL, '账号不存在或密码填写错误...');
+            return $this->fail('账号不存在或密码填写错误...', [], ResponseCode::AUTH_LOGON_FAIL);
         }
 
         // ... 自定义其它业务
@@ -75,9 +75,9 @@ class AuthController extends CController
             'password' => 'required'
         ]);
 
-        [$isTrue, $message, $data] = $this->userService->register($request);
+        [$isTrue, $message,] = $this->userService->register($request);
         if (!$isTrue) {
-            return $this->fail(ResponseCode::REGISTER_FAIL, $message);
+            return $this->fail($message, [], ResponseCode::REGISTER_FAIL);
         }
 
         return $this->success([], '账号注册成功...');

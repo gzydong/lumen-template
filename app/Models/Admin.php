@@ -23,6 +23,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $email 管理员邮箱
  * @property string $last_login_time 最后一次登录时间
  * @property string $last_login_ip 最后一次登录IP
+ * @property integer $is_delete 是否删除
  * @property integer $created_at 创建时间
  * @property integer $updated_at 更新时间
  *
@@ -40,7 +41,10 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
     // 管理员状态
     const STATUS_ENABLES = 10; // 正常状态
     const STATUS_DISABLES = 0; // 禁用状态
-    const STATUS_DELETE = -1;  // 删除状态
+
+    // 删除状态
+    const YES_DELETE = 1;      // 已删除状态
+    const NO_DELETE = 0;      // 未删除状态
 
     /**
      * 获取管理员角色信息(一个管理员只有一个角色)
@@ -102,8 +106,7 @@ class Admin extends BaseModel implements AuthenticatableContract, AuthorizableCo
     {
         $arr = [
             self::STATUS_ENABLES => '正常状态',
-            self::STATUS_DISABLES => '禁用状态',
-            self::STATUS_DELETE => '删除状态'
+            self::STATUS_DISABLES => '禁用状态'
         ];
 
         return $status == null ? $arr : (isset($arr[$status]) ? $arr[$status] : '');

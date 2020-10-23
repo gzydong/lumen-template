@@ -14,14 +14,6 @@ use Illuminate\Validation\ValidationException;
  */
 class AuthController extends CController
 {
-    public function __construct()
-    {
-        // 授权中间件
-        $this->middleware("auth:{$this->guard}", [
-            'except' => ['login', 'logout']
-        ]);
-    }
-
     /**
      * 登录接口
      *
@@ -31,7 +23,6 @@ class AuthController extends CController
      */
     public function login(Request $request)
     {
-        // 请求数据验证
         $this->validate($request, [
             'username' => 'required',
             'password' => 'required'
@@ -42,7 +33,7 @@ class AuthController extends CController
 
         // 通过用户信息换取用户token
         if (!$admin || !$token = auth($this->guard)->login($admin)) {
-            return $this->fail(ResponseCode::AUTH_LOGON_FAIL, '账号不存在或密码填写错误...');
+            return $this->fail('账号不存在或密码填写错误...', [], ResponseCode::AUTH_LOGON_FAIL);
         }
 
         // 更新登录信息
@@ -90,7 +81,7 @@ class AuthController extends CController
      * @param string $token 授权token
      * @return array
      */
-    protected function formatToken($token)
+    private function formatToken($token)
     {
         $ttl = auth($this->guard)->factory()->getTTL();
         $expires_time = time() + $ttl * 60;

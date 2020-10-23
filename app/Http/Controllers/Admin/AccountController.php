@@ -13,31 +13,6 @@ use Illuminate\Http\Request;
 class AccountController extends CController
 {
     /**
-     * 控制器初始化...
-     */
-    public function __construct()
-    {
-        $this->middleware("auth:{$this->guard}");
-    }
-
-    /**
-     * 获取登录用户信息
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function detail(){
-        $adminInfo = $this->user();
-
-        return $this->success([
-            'username'=>$adminInfo->username,
-            'nickname'=>'',
-            'email'=>$adminInfo->email,
-            'avatar'=>$adminInfo->avatar,
-            'profile'=>''
-        ]);
-    }
-
-    /**
      * 修改当前登录账号密码
      *
      * @param Request $request

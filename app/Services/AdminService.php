@@ -2,20 +2,20 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\Admin;
 use App\Repositorys\AdminRepository;
 use App\Traits\PagingTrait;
 use Illuminate\Http\Request;
-use Exception;
 
 class AdminService
 {
+    use PagingTrait;
+
     /**
      * @var AdminRepository
      */
     protected $adminRepository;
-
-    use PagingTrait;
 
     public function __construct(AdminRepository $adminRepository)
     {
@@ -33,6 +33,11 @@ class AdminService
         // 通过登录名查询用户信息
         $admin = $this->adminRepository->findByUserName($params['username']);
         if (!$admin) {
+            return false;
+        }
+
+        // 判断账号是否已被删除
+        if (Admin::YES_DELETE == $admin->is_delete) {
             return false;
         }
 
@@ -112,12 +117,12 @@ class AdminService
             $params['sort'] = get_orderby_sort($orderBy['sortOrder']);
         }
 
-        if($username = $request->input('username','')){
+        if ($username = $request->input('username', '')) {
             $params['username'] = addslashes($username);
         }
 
-        if($status = $request->input('status','')){
-            if(in_array($status,[1,2])){
+        if ($status = $request->input('status', '')) {
+            if (in_array($status, [1, 2])) {
                 $arr = [
                     '1' => Admin::STATUS_ENABLES,
                     '2' => Admin::STATUS_DISABLES,
@@ -132,5 +137,19 @@ class AdminService
             $request->input('page_size', 10),
             $params
         );
+    }
+
+    /**
+     * 删除管理员账号（软删除）
+     *
+     * @param int $admin_id 管理员ID
+     * @return boolean
+     */
+    public function delete(int $admin_id)
+    {
+        return (bool)Admin::where('id', $admin_id)->update([
+            'is_delete' => Admin::YES_DELETE,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
     }
 }

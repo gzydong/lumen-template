@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\Request;
 
 class RbacMiddleware
 {
@@ -41,7 +42,7 @@ class RbacMiddleware
      * @return mixed
      * @throws AuthorizationException
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         // 判断访问用户是否登录
         if ($this->auth->guard($this->guard)->guest()) {

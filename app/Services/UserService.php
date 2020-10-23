@@ -61,4 +61,16 @@ class UserService
             'user' => $userModel
         ]];
     }
+
+    /**
+     * 查询会员列表
+     *
+     * @param int $page 当前分页
+     * @param int $page_size 分页大小
+     * @param array $params 查询过滤参数
+     */
+    public function findAllUsers(int $page, int $page_size, array $params = [])
+    {
+
+    }
 }

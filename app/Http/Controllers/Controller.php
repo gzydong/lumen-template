@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-
 use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
 use App\Exceptions\ResponseCode;
@@ -23,7 +22,7 @@ class Controller extends BaseController
      *
      * @var string
      */
-    protected $guard = 'api';
+    protected $guard;
 
     /**
      * 自定义失败的验证响应
@@ -38,7 +37,7 @@ class Controller extends BaseController
             return call_user_func(static::$responseBuilder, $request, $errors);
         }
 
-        return $this->fail(ResponseCode::VALIDATION, array_shift($errors)[0], []);
+        return $this->fail(array_shift($errors)[0], [], ResponseCode::VALIDATION);
     }
 
     /**
