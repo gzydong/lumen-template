@@ -25,6 +25,7 @@ $router->group([], function () use ($router) {
  * AccountController 控制器分组
  */
 $router->group([], function () use ($router) {
+    $router->get('account/detail', ['uses' => 'AccountController@detail']);
     $router->post('account/update-password', ['uses' => 'AccountController@updatePassword']);
     $router->post('account/update-account', ['uses' => 'AccountController@updateAccount']);
 });
