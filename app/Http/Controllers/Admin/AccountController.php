@@ -17,15 +17,16 @@ class AccountController extends CController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function detail(){
+    public function detail()
+    {
         $adminInfo = $this->user();
 
         return $this->success([
-            'username'=>$adminInfo->username,
-            'nickname'=>'',
-            'email'=>$adminInfo->email,
-            'avatar'=>$adminInfo->avatar,
-            'profile'=>''
+            'username' => $adminInfo->username,
+            'nickname' => $adminInfo->nickname,
+            'email' => $adminInfo->email,
+            'avatar' => $adminInfo->avatar,
+            'profile' => ''
         ]);
     }
 
@@ -46,7 +47,7 @@ class AccountController extends CController
 
         $admin = $this->user();
 
-        if(!check_password($request->input('old_password'),$admin->password )){
+        if (!check_password($request->input('old_password'), $admin->password)) {
             return $this->fail('旧密填写错误...');
         }
 
@@ -68,11 +69,13 @@ class AccountController extends CController
         $this->validate($request, [
             'email' => 'present|email',
             'avatar' => 'present|url',
+            'nickname' => 'present',
         ]);
 
         $admin = $this->user();
         $admin->email = $request->input('email', '');
         $admin->avatar = $request->input('avatar', '');
+        $admin->nickname = $request->input('nickname', '');
         $admin->save();
 
         return $this->success([], '管理员信息修改成功...');

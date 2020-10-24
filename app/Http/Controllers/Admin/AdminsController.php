@@ -44,7 +44,6 @@ class AdminsController extends CController
         ]);
 
         $admin_id = $request->input('admin_id');
-
         if ($this->user()->id == $admin_id || !services()->adminService->delete($admin_id)) {
             return $this->fail('管理员账号删除失败...');
         }

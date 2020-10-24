@@ -35,7 +35,7 @@ class AdminRepository
      */
     public function findAllAdmins(int $page, int $page_size, array $params = [])
     {
-        $rowObj = Admin::select(['id', 'username', 'password', 'email', 'avatar', 'status', 'last_login_time', 'last_login_ip', 'created_at', 'updated_at']);
+        $rowObj = Admin::select(['id', 'username', 'nickname', 'email', 'avatar', 'status', 'last_login_time', 'last_login_ip', 'created_at', 'updated_at']);
 
         $orderBy = 'id';
         $sort = 'desc';

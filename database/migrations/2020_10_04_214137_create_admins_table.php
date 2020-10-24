@@ -18,8 +18,9 @@ class CreateAdminsTable extends Migration
             $table->id();
             $table->string('username', 30)->unique()->comment('管理员账号');
             $table->string('password', 100)->default('')->comment('登录密码');
-            $table->string('email', 50)->default('')->comment('管理员邮箱');
-            $table->string('avatar')->default('')->comment('管理员头像');
+            $table->string('email', 50)->default('')->comment('邮箱');
+            $table->string('avatar')->default('')->comment('头像');
+            $table->string('nickname')->default('', 30)->comment('昵称');
             $table->boolean('status')->default(10)->comment('账号状态[-1:已删除;0:已禁用;10:正常;]');
             $table->dateTime('last_login_time')->comment('最后登录时间');
             $table->string('last_login_ip', 20)->default('')->comment('最后登录IP');
