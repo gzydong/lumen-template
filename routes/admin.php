@@ -19,6 +19,8 @@ $router->group([], function () use ($router) {
 
     // 退出登录接口
     $router->post('auth/logout', ['uses' => 'AuthController@logout']);
+
+    $router->get('auth/menus', ['uses' => 'AuthController@menus']);
 });
 
 /**

@@ -167,6 +167,6 @@ class RbacRepository
      */
     public function findAllPerms($field = ['*'])
     {
-        return Permission::get($field)->toArray();
+        return Permission::orderBy('sort','asc')->get($field)->toArray();
     }
 }

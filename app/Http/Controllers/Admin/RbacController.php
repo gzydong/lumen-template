@@ -105,6 +105,8 @@ class RbacController extends CController
             'parent_id' => 'required|integer|min:0',
             'rule_name' => 'required',
             'route' => 'required',
+            'icon' => 'present',
+            'sort' => 'present|integer|min:0|max:9999',
         ]);
 
         $result = services()->rbacService->createPermission($request);
@@ -242,7 +244,7 @@ class RbacController extends CController
      */
     public function permissions()
     {
-        $rows = services()->rbacService->getRepository()->findAllPerms(['id', 'parent_id', 'type', 'route', 'rule_name']);
+        $rows = services()->rbacService->getRepository()->findAllPerms(['id', 'parent_id', 'type', 'route', 'rule_name', 'sort', 'icon']);
 
         $result = $this->getPagingRows($rows, count($rows), 1, 10000);
         return $this->success($result);

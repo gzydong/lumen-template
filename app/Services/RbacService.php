@@ -3,7 +3,11 @@
 namespace App\Services;
 
 use App\Models\Admin;
+use App\Models\Rbac\AdminPermission;
+use App\Models\Rbac\Permission;
 use App\Models\Rbac\RoleAdmin;
+use App\Models\Rbac\RolePermission;
+use App\Repositorys\AdminRepository;
 use App\Repositorys\RbacRepository;
 use Illuminate\Http\Request;
 
@@ -25,7 +29,8 @@ class RbacService
         $this->rbacRepository = $rbacRepository;
     }
 
-    public function getRepository(){
+    public function getRepository()
+    {
         return $this->rbacRepository;
     }
 
@@ -86,7 +91,7 @@ class RbacService
      */
     public function createPermission(Request $request)
     {
-        $data = $request->only(['type', 'parent_id', 'rule_name', 'route']);
+        $data = $request->only(['type', 'parent_id', 'rule_name', 'route', 'icon', 'sort']);
         return $this->rbacRepository->insertPerms($data);
     }
 
@@ -98,7 +103,7 @@ class RbacService
      */
     public function editPermission(Request $request)
     {
-        $data = $request->only(['type', 'parent_id', 'rule_name', 'route']);
+        $data = $request->only(['type', 'parent_id', 'rule_name', 'route', 'icon', 'sort']);
         return $this->rbacRepository->updatePerms($request->input('id'), $data);
     }
 
@@ -173,5 +178,41 @@ class RbacService
     public function permissions()
     {
         return $this->rbacRepository->findAllPerms(['id', 'parent_id', 'route', 'rule_name']);
+    }
+
+    /**
+     * 获取管理员授权的菜单
+     *
+     * @param Admin $admin
+     * @return mixed
+     */
+    public function getAuthMenus(Admin $admin)
+    {
+        $menus = Permission::whereIn('type', [Permission::TYPE_DIR, Permission::TYPE_MENU])->orderBy('sort', 'asc')->get(['id', 'parent_id', 'type', 'route', 'rule_name', 'icon'])->toArray();
+
+        // 判断是否是 admin 管理员，admin 属于超级管理员拥有所有权限
+        if ($admin->username != 'admin') {
+            // 查询个人独立权限
+            $alonePerms = AdminPermission::where('admin_id', $admin->id)->pluck('permission_id')->toArray();
+
+            // 查询所属角色权限
+            $rolePrems = [];
+            $role_id = RoleAdmin::where('admin_id', $admin->id)->value('role_id');
+            if ($role_id) {
+                $rolePrems = RolePermission::where('role_id', $role_id)->pluck('permission_id')->toArray();
+            }
+
+            // 权限合并去重
+            $allPerms = array_unique(array_merge($alonePerms, $rolePrems));
+
+            // 过滤未拥有的权限
+            foreach ($menus as $k => $menu) {
+                if (!in_array($menu['id'], $allPerms)) {
+                    unset($menus[$k]);
+                }
+            }
+        }
+
+        return $menus;
     }
 }

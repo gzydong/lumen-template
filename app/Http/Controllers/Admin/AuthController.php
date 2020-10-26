@@ -92,4 +92,14 @@ class AuthController extends CController
             'expires_time' => date('Y-m-d H:i:s', $expires_time)
         ];
     }
+
+    /**
+     * 获取授权菜单配置
+     */
+    public function menus(){
+        $adminInfo = $this->user();
+
+        $menus = services()->rbacService->getAuthMenus($adminInfo);
+        return $this->success(['menus'=>$menus]);
+    }
 }
