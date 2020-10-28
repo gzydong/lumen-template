@@ -72,8 +72,9 @@ function getMenuTree($items)
             'children' => [],
         ];
 
-        if ($item['children']) {
+        if ($item['type'] == 0) {
             $data['component'] = 'RouteView';
+
             $data['children'] = getMenuTree($item['children']);
         } else {
             unset($data['children']);

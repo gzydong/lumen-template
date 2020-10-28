@@ -113,21 +113,7 @@ class RbacRepository
      */
     public function insertPerms(array $data)
     {
-        $result = new Permission();
-        $result->parent_id = $data['parent_id'];
-        $result->type = $data['type'];
-        $result->title = $data['title'];
-        $result->path = $data['path'];
-        $result->component = $data['component'];
-        $result->perms = $data['perms'];
-        $result->icon = $data['icon'];
-        $result->sort = $data['sort'];
-        $result->hidden = $data['hidden'];
-        $result->is_frame = $data['is_frame'];
-        $result->created_at = date('Y-m-d H:i:s');
-        $result->updated_at = date('Y-m-d H:i:s');
-        return $result->save();
-
+        $data = $this->filterParams($data);
         try {
             $result = new Permission();
             $result->parent_id = $data['parent_id'];
@@ -144,9 +130,30 @@ class RbacRepository
             $result->updated_at = date('Y-m-d H:i:s');
             return $result->save();
         } catch (Exception $e) {
-            var_dump($e);
             return false;
         }
+    }
+
+    /**
+     * 过滤数据
+     *
+     * @param array $data
+     * @return array
+     */
+    private function filterParams(array $data){
+        if($data['type'] == Permission::TYPE_DIR){
+            $data['is_frame'] = 0;
+            $data['component'] = '';
+            $data['perms'] = '';
+        }else if($data['type'] == Permission::TYPE_MENU){
+            $data['perms'] = '';
+        }else{
+            $data['is_frame'] = 0;
+            $data['component'] = '';
+            $data['path'] = '';
+            $data['icon'] = '';
+        }
+        return $data;
     }
 
     /**
@@ -158,6 +165,8 @@ class RbacRepository
      */
     public function updatePerms(int $permission_id, array $data)
     {
+        $data = $this->filterParams($data);
+
         try {
             $data['updated_at'] = date('Y-m-d H:i:s');
             return Permission::where('id', $permission_id)->update($data);

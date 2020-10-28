@@ -106,9 +106,9 @@ class AuthController extends CController
             'array'=>$menus,
         ]);
 
-
         $menus = $tree->getTreeArray(0);
 
+//        dd($menus);
         return $this->success(['menus'=>getMenuTree($menus)]);
     }
 }
