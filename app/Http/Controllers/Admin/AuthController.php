@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\ResponseCode;
+use App\Helpers\Tree;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -98,8 +99,16 @@ class AuthController extends CController
      */
     public function menus(){
         $adminInfo = $this->user();
-
         $menus = services()->rbacService->getAuthMenus($adminInfo);
-        return $this->success(['menus'=>$menus]);
+
+        $tree = new Tree();
+        $tree->init([
+            'array'=>$menus,
+        ]);
+
+
+        $menus = $tree->getTreeArray(0);
+
+        return $this->success(['menus'=>getMenuTree($menus)]);
     }
 }

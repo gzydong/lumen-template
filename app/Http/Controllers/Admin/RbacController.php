@@ -103,10 +103,14 @@ class RbacController extends CController
         $this->validate($request, [
             'type' => 'required|in:0,1,2',
             'parent_id' => 'required|integer|min:0',
-            'rule_name' => 'required',
-            'route' => 'required',
+            'title' => 'required',
+            'path' => 'present',
+            'component' => 'present',
+            'perms' => 'present',
             'icon' => 'present',
             'sort' => 'present|integer|min:0|max:9999',
+            'hidden' => 'required|in:0,1',
+            'is_frame' => 'required|in:0,1',
         ]);
 
         $result = services()->rbacService->createPermission($request);
@@ -130,8 +134,14 @@ class RbacController extends CController
             'id' => 'required|integer|min:1',
             'type' => 'required|in:0,1,2',
             'parent_id' => 'required|integer|min:0',
-            'rule_name' => 'required',
-            'route' => 'required',
+            'title' => 'required',
+            'path' => 'present',
+            'component' => 'present',
+            'perms' => 'present',
+            'icon' => 'present',
+            'sort' => 'present|integer|min:0|max:9999',
+            'hidden' => 'required|in:0,1',
+            'is_frame' => 'required|in:0,1',
         ]);
 
         $result = services()->rbacService->editPermission($request);
@@ -244,7 +254,7 @@ class RbacController extends CController
      */
     public function permissions()
     {
-        $rows = services()->rbacService->getRepository()->findAllPerms(['id', 'parent_id', 'type', 'route', 'rule_name', 'sort', 'icon']);
+        $rows = services()->rbacService->getRepository()->findAllPerms(['id', 'parent_id', 'type', 'path', 'perms', 'sort', 'icon','title','hidden','is_frame','component']);
 
         $result = $this->getPagingRows($rows, count($rows), 1, 10000);
         return $this->success($result);
@@ -298,9 +308,9 @@ class RbacController extends CController
                 'id' => $value['id'],
                 'pid' => $value['parent_id'],
                 'key' => $value['id'],
-                'title' => $value['rule_name'],
+                'title' => $value['title'],
             ];
-        }, $rbacRepository->findAllPerms(['id', 'parent_id', 'rule_name']));
+        }, $rbacRepository->findAllPerms(['id', 'parent_id', 'title']));
 
         $role_id = RoleAdmin::where('admin_id', $admin_id)->value('role_id');
         return $this->success([

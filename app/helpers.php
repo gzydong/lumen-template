@@ -6,6 +6,8 @@
 |--------------------------------------------------------------------------
 */
 
+use Illuminate\Support\Str;
+
 /**
  * 获取 Service 服务
  *
@@ -50,4 +52,39 @@ function get_orderby_sort($sort)
     ];
 
     return isset($arr[$sort]) ? $arr[$sort] : null;
+}
+
+function getMenuTree($items)
+{
+    $menus = [];
+    foreach ($items as $item) {
+        $data = [
+            'name' => Str::ucfirst($item['path']),
+            'path' => $item['path'],
+            'component' => $item['component'],
+            'meta' => [
+                'icon' => empty($item['icon'])?null:$item['icon'],
+                'title' => $item['title'],
+                'keepAlive' => false,
+                'target' => $item['target']?'_blank':false,
+            ],
+            'hidden' => $item['hidden']??false,
+            'children' => [],
+        ];
+
+        if ($item['children']) {
+            $data['component'] = 'RouteView';
+            $data['children'] = getMenuTree($item['children']);
+        } else {
+            unset($data['children']);
+        }
+
+        if($item['target']){
+            unset($data['component']);
+        }
+
+        $menus[] = $data;
+    }
+
+    return $menus;
 }

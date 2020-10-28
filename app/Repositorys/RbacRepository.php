@@ -113,16 +113,38 @@ class RbacRepository
      */
     public function insertPerms(array $data)
     {
+        $result = new Permission();
+        $result->parent_id = $data['parent_id'];
+        $result->type = $data['type'];
+        $result->title = $data['title'];
+        $result->path = $data['path'];
+        $result->component = $data['component'];
+        $result->perms = $data['perms'];
+        $result->icon = $data['icon'];
+        $result->sort = $data['sort'];
+        $result->hidden = $data['hidden'];
+        $result->is_frame = $data['is_frame'];
+        $result->created_at = date('Y-m-d H:i:s');
+        $result->updated_at = date('Y-m-d H:i:s');
+        return $result->save();
+
         try {
             $result = new Permission();
             $result->parent_id = $data['parent_id'];
             $result->type = $data['type'];
-            $result->route = $data['route'];
-            $result->rule_name = $data['rule_name'];
+            $result->title = $data['title'];
+            $result->path = $data['path'];
+            $result->component = $data['component'];
+            $result->perms = $data['perms'];
+            $result->icon = $data['icon'];
+            $result->sort = $data['sort'];
+            $result->hidden = $data['hidden'];
+            $result->is_frame = $data['is_frame'];
             $result->created_at = date('Y-m-d H:i:s');
             $result->updated_at = date('Y-m-d H:i:s');
             return $result->save();
         } catch (Exception $e) {
+            var_dump($e);
             return false;
         }
     }

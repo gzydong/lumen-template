@@ -91,7 +91,8 @@ class RbacService
      */
     public function createPermission(Request $request)
     {
-        $data = $request->only(['type', 'parent_id', 'rule_name', 'route', 'icon', 'sort']);
+
+        $data = $request->only(['parent_id', 'type', 'title', 'path', 'component', 'perms', 'icon', 'sort', 'hidden', 'is_frame']);
         return $this->rbacRepository->insertPerms($data);
     }
 
@@ -103,7 +104,7 @@ class RbacService
      */
     public function editPermission(Request $request)
     {
-        $data = $request->only(['type', 'parent_id', 'rule_name', 'route', 'icon', 'sort']);
+        $data = $request->only(['parent_id', 'type', 'title', 'path', 'component', 'perms', 'icon', 'sort', 'hidden', 'is_frame']);
         return $this->rbacRepository->updatePerms($request->input('id'), $data);
     }
 
@@ -188,7 +189,12 @@ class RbacService
      */
     public function getAuthMenus(Admin $admin)
     {
-        $menus = Permission::whereIn('type', [Permission::TYPE_DIR, Permission::TYPE_MENU])->orderBy('sort', 'asc')->get(['id', 'parent_id', 'type', 'route', 'rule_name', 'icon'])->toArray();
+        $menus = Permission::whereIn('type', [Permission::TYPE_DIR, Permission::TYPE_MENU])->orderBy('sort', 'asc')->get([
+            'id', 'parent_id', 'type', 'title', 'path',
+            'component', 'perms', 'icon', 'sort',
+            'hidden',
+            'is_frame as target'
+        ])->toArray();
 
         // 判断是否是 admin 管理员，admin 属于超级管理员拥有所有权限
         if ($admin->username != 'admin') {
@@ -212,6 +218,11 @@ class RbacService
                 }
             }
         }
+
+        array_walk($menus,function (&$menu){
+            $menu['hidden'] = $menu['hidden'] == 1;
+            $menu['target'] = $menu['target'] == 1;
+        });
 
         return $menus;
     }
