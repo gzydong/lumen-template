@@ -61,6 +61,7 @@ $app->singleton(
 
 $app->configure('app');
 $app->configure('database');
+
 // 加载自定义配置信息
 $app->configure('system');
 
@@ -84,9 +85,6 @@ $app->middleware([
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'throttle' => App\Http\Middleware\ThrottleMiddleware::class,
-
-    // 后台接口权限控制中间件
-    'rbac' => App\Http\Middleware\RbacMiddleware::class,
 ]);
 
 /*
@@ -149,9 +147,6 @@ $app->router->group([
 $app->router->group([
     'prefix' => 'admin',
     'namespace' => 'App\Http\Controllers\Admin',
-    'middleware' => [
-        'auth:admin'
-    ]
 ], function ($router) {
     require __DIR__ . '/../routes/admin.php';
 });

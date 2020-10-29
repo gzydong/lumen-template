@@ -7,7 +7,6 @@ use App\Models\Rbac\AdminPermission;
 use App\Models\Rbac\Permission;
 use App\Models\Rbac\RoleAdmin;
 use App\Models\Rbac\RolePermission;
-use App\Repositorys\AdminRepository;
 use App\Repositorys\RbacRepository;
 use Illuminate\Http\Request;
 
@@ -131,7 +130,11 @@ class RbacService
     public function giveAdminRole(int $admin_id, int $role_id, array $permissions = [])
     {
         try {
-            RoleAdmin::updateOrCreate(['admin_id' => $admin_id], ['role_id' => $role_id]);
+            if ($role_id) {
+                RoleAdmin::updateOrCreate(['admin_id' => $admin_id], ['role_id' => $role_id]);
+            } else {
+                RoleAdmin::where('admin_id', $admin_id)->delete();
+            }
 
             $admin = Admin::where('id', $admin_id)->first();
             // 同步管理员独立权限
@@ -219,11 +222,45 @@ class RbacService
             }
         }
 
-        array_walk($menus,function (&$menu){
+        array_walk($menus, function (&$menu) {
             $menu['hidden'] = $menu['hidden'] == 1;
             $menu['target'] = $menu['target'] == 1;
         });
 
         return $menus;
+    }
+
+    /**
+     * 获取管理员按钮权限
+     *
+     * @param Admin $admin
+     * @return array
+     */
+    public function getAuthPerms(Admin $admin){
+        $perms = Permission::where('type', Permission::TYPE_PERMS)->get(['id','perms'])->toArray();
+
+        if ($admin->username != 'admin') {
+            // 查询个人独立权限
+            $alonePerms = AdminPermission::where('admin_id', $admin->id)->pluck('permission_id')->toArray();
+
+            // 查询所属角色权限
+            $rolePrems = [];
+            $role_id = RoleAdmin::where('admin_id', $admin->id)->value('role_id');
+            if ($role_id) {
+                $rolePrems = RolePermission::where('role_id', $role_id)->pluck('permission_id')->toArray();
+            }
+
+            // 权限合并去重
+            $allPerms = array_unique(array_merge($alonePerms, $rolePrems));
+
+            // 过滤未拥有的权限
+            foreach ($perms as $k => $perm) {
+                if (!in_array($perm['id'], $allPerms)) {
+                    unset($perms[$k]);
+                }
+            }
+        }
+
+        return array_column($perms,'perms');
     }
 }

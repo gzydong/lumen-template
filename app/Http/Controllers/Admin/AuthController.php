@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\ResponseCode;
-use App\Helpers\Tree;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -92,23 +91,5 @@ class AuthController extends CController
             'token_type' => 'Bearer',
             'expires_time' => date('Y-m-d H:i:s', $expires_time)
         ];
-    }
-
-    /**
-     * 获取授权菜单配置
-     */
-    public function menus(){
-        $adminInfo = $this->user();
-        $menus = services()->rbacService->getAuthMenus($adminInfo);
-
-        $tree = new Tree();
-        $tree->init([
-            'array'=>$menus,
-        ]);
-
-        $menus = $tree->getTreeArray(0);
-
-//        dd($menus);
-        return $this->success(['menus'=>getMenuTree($menus)]);
     }
 }
